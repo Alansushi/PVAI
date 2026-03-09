@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Vivo — Tu coordinador de proyectos con IA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #0C1F35; --blue: #1A4F7A; --accent: #2E8FC0; --teal: #1DA6A0;
+  --amber: #E09B3D; --red: #D94F4F; --green: #2A9B6F; --purple: #7C5CBF;
+  --white: #F8FAFB; --gray: #8A9BB0;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:var(--navy); font-family:'DM Sans',sans-serif; color:var(--white); min-height:100vh; overflow-x:hidden; }
+
+nav { display:flex; justify-content:space-between; align-items:center; padding:20px 48px; border-bottom:1px solid rgba(255,255,255,0.06); position:sticky; top:0; z-index:100; background:rgba(12,31,53,0.97); backdrop-filter:blur(12px); }
+.logo { font-family:'Playfair Display',serif; font-size:22px; font-weight:800; }
+.logo span { color:var(--accent); }
+.logo-sub { font-size:10px; color:var(--gray); font-weight:500; margin-top:1px; letter-spacing:0.3px; }
+.nav-tabs { display:flex; gap:4px; background:rgba(255,255,255,0.06); border-radius:8px; padding:4px; }
+.nav-tab { padding:7px 18px; border-radius:6px; font-size:13px; font-weight:500; cursor:pointer; transition:all 0.2s; color:var(--gray); border:none; background:transparent; white-space:nowrap; }
+.nav-tab.active { background:var(--accent); color:#fff; }
+.nav-tab:hover:not(.active) { color:var(--white); background:rgba(255,255,255,0.08); }
+.nav-tab.roadmap-tab { position:relative; }
+.nav-tab.roadmap-tab::after { content:'NUEVO'; position:absolute; top:-6px; right:-4px; background:var(--amber); color:#000; font-size:7px; font-weight:800; padding:1px 5px; border-radius:8px; letter-spacing:0.5px; }
+
+.view { display:none; animation:fadeIn 0.4s ease; }
+.view.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SHARED ── */
+.sec-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:var(--gray); margin-bottom:10px; }
+.nl-tag { display:inline-flex; align-items:center; gap:4px; background:rgba(124,92,191,0.2); border:1px solid rgba(124,92,191,0.35); color:#B89EE8; font-size:10px; font-weight:600; padding:2px 8px; border-radius:10px; margin-top:5px; }
+
+/* ══════════════════════════
+   VIEW 1 — ANTES vs DESPUÉS
+══════════════════════════ */
+#view-antes { padding:40px 48px; }
+.av-header { text-align:center; margin-bottom:36px; }
+.av-header h2 { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; margin-bottom:8px; }
+.av-header p { color:var(--gray); font-size:14px; max-width:580px; margin:0 auto; line-height:1.65; }
+.av-grid { display:grid; grid-template-columns:1fr 60px 1fr; gap:0; align-items:start; }
+.av-col-label { text-align:center; padding:11px 20px; border-radius:10px 10px 0 0; font-size:11px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+.av-col-label.before { background:rgba(217,79,79,0.12); color:var(--red); border:1px solid rgba(217,79,79,0.25); border-bottom:none; }
+.av-col-label.after  { background:rgba(42,155,111,0.12); color:var(--green); border:1px solid rgba(42,155,111,0.25); border-bottom:none; }
+.av-arrow-col { display:flex; align-items:center; justify-content:center; padding-top:52px; }
+.av-arrow-btn { width:40px; height:40px; background:var(--accent); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; box-shadow:0 0 24px rgba(46,143,192,0.4); }
+.av-cards { display:flex; flex-direction:column; gap:1px; }
+.av-card { padding:13px 17px; transition:all 0.2s; border-left:3px solid transparent; }
+.av-card:last-child { border-radius:0 0 8px 8px; }
+.av-card.bad  { background:rgba(217,79,79,0.07); border-color:var(--red); border-top:1px solid rgba(217,79,79,0.12); border-right:1px solid rgba(217,79,79,0.12); border-bottom:1px solid rgba(217,79,79,0.05); }
+.av-card.good { background:rgba(42,155,111,0.07); border-color:var(--green); border-top:1px solid rgba(42,155,111,0.12); border-right:1px solid rgba(42,155,111,0.12); border-bottom:1px solid rgba(42,155,111,0.05); }
+.av-card:hover { transform:translateX(3px); filter:brightness(1.1); }
+.av-card .cr { display:flex; align-items:flex-start; gap:10px; }
+.av-card .ci { font-size:17px; margin-top:1px; flex-shrink:0; }
+.av-card h4 { font-size:12px; font-weight:700; margin-bottom:3px; }
+.av-card.bad  h4 { color:var(--red); }
+.av-card.good h4 { color:var(--green); }
+.av-card p { font-size:11.5px; color:var(--gray); line-height:1.5; }
+.orch-banner { margin-top:24px; background:linear-gradient(135deg,rgba(26,79,122,0.6),rgba(46,143,192,0.15)); border:1px solid rgba(46,143,192,0.3); border-radius:14px; padding:20px 26px; display:grid; grid-template-columns:auto 1fr; gap:18px; align-items:center; }
+.orch-banner .oi { font-size:34px; }
+.orch-banner h3 { font-size:14px; font-weight:700; color:var(--accent); margin-bottom:5px; }
+.orch-banner p { font-size:12px; color:var(--gray); line-height:1.6; }
+.orch-banner strong { color:var(--white); }
+.av-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:18px; }
+.av-stat { text-align:center; padding:20px; border-radius:12px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); }
+.av-stat .num { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; color:var(--accent); }
+.av-stat .lbl { font-size:11px; color:var(--gray); margin-top:4px; line-height:1.4; }
+
+/* ══════════════════════════
+   VIEW 2 — ORQUESTACIÓN
+══════════════════════════ */
+#view-flujo { padding:40px 48px; }
+.fl-header { text-align:center; margin-bottom:32px; }
+.fl-header h2 { font-family:'Playfair Display',serif; font-size:34px; font-weight:800; margin-bottom:8px; }
+.fl-header p { color:var(--gray); font-size:14px; max-width:600px; margin:0 auto; line-height:1.65; }
+.fl-header .sub-tag { display:inline-block; margin-top:11px; background:rgba(124,92,191,0.18); border:1px solid rgba(124,92,191,0.35); color:#B89EE8; font-size:12px; font-weight:600; padding:5px 16px; border-radius:20px; }
+.input-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+.ig { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.09); border-radius:12px; padding:15px 17px; }
+.ig-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:11px; display:flex; align-items:center; gap:7px; }
+.ig-title .dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.ig-title.ft { color:var(--accent); } .ig-title.ft .dot { background:var(--accent); }
+.ig-title.nl { color:#B89EE8; }     .ig-title.nl .dot { background:#B89EE8; }
+.ii { display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:8px; margin-bottom:5px; transition:all 0.2s; }
+.ii:last-child { margin-bottom:0; }
+.ii.ft { background:rgba(46,143,192,0.1); border:1px solid rgba(46,143,192,0.2); }
+.ii.nl { background:rgba(124,92,191,0.1); border:1px solid rgba(124,92,191,0.2); }
+.ii.err { background:rgba(217,79,79,0.08); border:1px solid rgba(217,79,79,0.2); }
+.ii:hover { filter:brightness(1.15); transform:translateX(2px); }
+.ii .icon { font-size:15px; flex-shrink:0; }
+.ii .name { font-size:12px; font-weight:600; }
+.ii .sub  { font-size:10px; color:var(--gray); margin-top:1px; }
+.ii.ft .name { color:var(--accent); }
+.ii.nl .name { color:#B89EE8; }
+.ii.err .name { color:var(--red); }
+
+/* ── DIAGRAMA ANIMADO ── */
+.diagram-section { margin:28px 0; }
+.diagram-hero {
+  text-align:center; margin-bottom:24px;
+}
+.diagram-hero h3 {
+  font-family:'Playfair Display',serif; font-size:28px; font-weight:800;
+  color:var(--white); margin-bottom:8px; line-height:1.2;
+}
+.diagram-hero h3 span { color:var(--accent); }
+.diagram-hero p { font-size:13px; color:var(--gray); margin-bottom:14px; line-height:1.5; }
+.diagram-cta-arrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:12px; font-weight:700; color:var(--accent);
+  background:rgba(46,143,192,0.1); border:1px solid rgba(46,143,192,0.3);
+  padding:7px 18px; border-radius:20px; cursor:pointer;
+  transition:all 0.2s; animation:arrowBounce 2s ease-in-out infinite;
+}
+.diagram-cta-arrow:hover { background:rgba(46,143,192,0.2); }
+@keyframes arrowBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(4px)} }
+
+.diagram-container {
+  background:linear-gradient(160deg,rgba(15,45,74,0.9),rgba(12,31,53,0.95));
+  border:1px solid rgba(46,143,192,0.25); border-radius:16px;
+  padding:32px 28px; position:relative; overflow:hidden;
+}
+.diagram-container::before {
+  content:''; position:absolute; top:-60px; left:50%; transform:translateX(-50%);
+  width:300px; height:300px;
+  background:radial-gradient(circle, rgba(46,143,192,0.08), transparent 70%);
+  pointer-events:none;
+}
+
+/* Input node */
+.diag-input-wrapper { display:flex; justify-content:center; margin-bottom:0; }
+.diag-input-node {
+  background:linear-gradient(135deg,rgba(124,92,191,0.25),rgba(124,92,191,0.1));
+  border:1.5px solid rgba(124,92,191,0.6); border-radius:12px;
+  padding:14px 20px; width:100%; max-width:600px;
+  position:relative; cursor:pointer;
+  transition:all 0.3s;
+}
+.diag-input-node:hover { border-color:#B89EE8; box-shadow:0 0 20px rgba(124,92,191,0.2); }
+.diag-input-node .din-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#B89EE8; margin-bottom:6px; }
+.diag-input-node .din-text { font-family:'DM Mono',monospace; font-size:11.5px; color:#D4C4F8; line-height:1.65; }
+.diag-input-node .din-text .highlight { color:#fff; font-weight:500; }
+.din-cursor { display:inline-block; width:7px; height:13px; background:#B89EE8; animation:blink 1.1s infinite; vertical-align:middle; margin-left:2px; border-radius:1px; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:0} }
+
+/* SVG lines */
+.diag-svg { width:100%; overflow:visible; display:block; }
+.diag-path {
+  fill:none; stroke-width:1.5; stroke-linecap:round;
+  stroke-dasharray:200; stroke-dashoffset:200;
+  transition:stroke-dashoffset 0.6s ease;
+}
+.diag-path.active { stroke-dashoffset:0; }
+.diag-path.p1 { stroke:rgba(46,143,192,0.7); }
+.diag-path.p2 { stroke:rgba(42,155,111,0.7); }
+.diag-path.p3 { stroke:rgba(224,155,61,0.7); }
+.diag-path.p4 { stroke:rgba(217,79,79,0.7); }
+.diag-path.p5 { stroke:rgba(29,166,160,0.7); }
+.diag-path.p6 { stroke:rgba(176,143,232,0.7); }
+
+/* Dot traveling along the path */
+.diag-dot {
+  r:4; opacity:0;
+  transition:opacity 0.2s;
+}
+.diag-dot.active { opacity:1; }
+
+/* Output nodes */
+.diag-outputs { display:grid; grid-template-columns:repeat(6,1fr); gap:8px; margin-top:0; }
+.diag-out {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.1);
+  border-radius:10px; padding:12px 8px; text-align:center;
+  transition:all 0.4s ease; cursor:default; position:relative;
+  opacity:0.4;
+}
+.diag-out.lit { opacity:1; transform:translateY(-2px); }
+.diag-out.lit.c1 { border-color:rgba(46,143,192,0.5); background:rgba(46,143,192,0.1); box-shadow:0 4px 16px rgba(46,143,192,0.15); }
+.diag-out.lit.c2 { border-color:rgba(42,155,111,0.5); background:rgba(42,155,111,0.1); box-shadow:0 4px 16px rgba(42,155,111,0.15); }
+.diag-out.lit.c3 { border-color:rgba(224,155,61,0.5); background:rgba(224,155,61,0.1); box-shadow:0 4px 16px rgba(224,155,61,0.15); }
+.diag-out.lit.c4 { border-color:rgba(217,79,79,0.5); background:rgba(217,79,79,0.1); box-shadow:0 4px 16px rgba(217,79,79,0.15); }
+.diag-out.lit.c5 { border-color:rgba(29,166,160,0.5); background:rgba(29,166,160,0.1); box-shadow:0 4px 16px rgba(29,166,160,0.15); }
+.diag-out.lit.c6 { border-color:rgba(176,143,232,0.5); background:rgba(176,143,232,0.1); box-shadow:0 4px 16px rgba(176,143,232,0.15); }
+.diag-out .do-icon { font-size:18px; margin-bottom:5px; }
+.diag-out .do-name { font-size:10px; font-weight:700; color:var(--white); margin-bottom:2px; line-height:1.3; }
+.diag-out .do-sub { font-size:9px; color:var(--gray); line-height:1.3; }
+.diag-out .do-badge {
+  position:absolute; top:-6px; right:-4px;
+  background:var(--green); color:#fff; font-size:8px; font-weight:700;
+  padding:1px 5px; border-radius:8px; opacity:0; transition:opacity 0.3s;
+}
+.diag-out.lit .do-badge { opacity:1; }
+
+/* Play button */
+.diag-play-row { display:flex; justify-content:center; align-items:center; gap:12px; margin:20px 0 24px; }
+.diag-play-btn {
+  display:flex; align-items:center; gap:8px;
+  background:linear-gradient(135deg,var(--accent),var(--blue));
+  border:none; border-radius:8px; color:#fff;
+  padding:10px 20px; font-size:12px; font-weight:600; cursor:pointer;
+  transition:all 0.2s; font-family:'DM Sans',sans-serif;
+  box-shadow:0 4px 16px rgba(46,143,192,0.3);
+}
+.diag-play-btn:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(46,143,192,0.4); }
+.diag-play-btn:disabled { opacity:0.6; cursor:not-allowed; transform:none; }
+.diag-play-btn .play-icon { font-size:14px; }
+.diag-counter { font-size:11px; color:var(--gray); }
+.diag-counter span { color:var(--accent); font-weight:700; }
+
+/* Pulse ring on active output */
+@keyframes pulseRing {
+  0% { box-shadow: 0 0 0 0 rgba(46,143,192,0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(46,143,192,0); }
+  100% { box-shadow: 0 0 0 0 rgba(46,143,192,0); }
+}
+.diag-out.just-lit { animation: pulseRing 0.8s ease-out; }
+
+/* Engine box */
+.nl-example { background:rgba(124,92,191,0.1); border:1px solid rgba(124,92,191,0.22); border-radius:10px; padding:14px 16px; margin-bottom:14px; font-family:'DM Mono',monospace; font-size:11px; color:#C4AFF0; line-height:1.75; }
+.nl-example .nl-lbl { font-size:10px; font-weight:700; color:#B89EE8; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:8px; font-family:'DM Sans',sans-serif; }
+.cursor { display:inline-block; width:7px; height:12px; background:#B89EE8; animation:blink 1.2s infinite; vertical-align:middle; margin-left:2px; }
+.nl-flow { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:20px; }
+.nlf { background:rgba(124,92,191,0.1); border:1px solid rgba(124,92,191,0.2); border-radius:8px; padding:12px; text-align:center; }
+.nlf .ni { font-size:18px; margin-bottom:5px; }
+.nlf h5 { font-size:11px; font-weight:700; color:#B89EE8; margin-bottom:3px; }
+.nlf p { font-size:10px; color:var(--gray); line-height:1.4; }
+.engine-box { background:linear-gradient(145deg,#0F2D4A,#1A4F7A); border:1px solid rgba(46,143,192,0.5); border-radius:16px; padding:24px 28px; text-align:center; position:relative; overflow:hidden; margin-bottom:20px; }
+.engine-box::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 50% 0%,rgba(46,143,192,0.18),transparent 60%); }
+.engine-title { font-family:'Playfair Display',serif; font-size:26px; font-weight:800; position:relative; margin-bottom:4px; }
+.engine-title span { color:var(--accent); }
+.engine-sub { font-size:11px; color:var(--gray); position:relative; margin-bottom:18px; }
+.engine-procs { display:grid; grid-template-columns:1fr 1fr; gap:8px; position:relative; }
+.ep { background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.09); border-radius:8px; padding:10px 12px; text-align:left; display:flex; align-items:flex-start; gap:8px; }
+.ep-dot { width:18px; height:18px; border-radius:50%; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; flex-shrink:0; margin-top:1px; }
+.ep p { font-size:11px; color:var(--white); line-height:1.3; }
+.ep.nl-ep { border-color:rgba(124,92,191,0.3); }
+.ep.nl-ep .ep-dot { background:#7C5CBF; }
+.output-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; }
+.oi { background:rgba(42,155,111,0.08); border:1px solid rgba(42,155,111,0.2); border-radius:10px; padding:14px 15px; transition:all 0.2s; }
+.oi:hover { background:rgba(42,155,111,0.15); border-color:var(--green); transform:translateY(-2px); }
+.oi .oic { font-size:20px; margin-bottom:7px; }
+.oi .oin { font-size:12px; font-weight:700; color:var(--green); margin-bottom:3px; }
+.oi .ois { font-size:10.5px; color:var(--gray); line-height:1.4; }
+
+/* ══════════════════════════
+   VIEW 3 — DASHBOARD
+══════════════════════════ */
+#view-dashboard { padding:28px 48px; }
+.db-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.db-top h2 { font-family:'Playfair Display',serif; font-size:26px; font-weight:800; }
+.db-top p { font-size:12px; color:var(--gray); margin-top:3px; }
+.db-badge { background:rgba(46,143,192,0.15); border:1px solid rgba(46,143,192,0.35); color:var(--accent); font-size:11px; font-weight:600; padding:5px 14px; border-radius:20px; }
+.db-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:16px; }
+.kpi { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:12px; padding:15px 17px; cursor:pointer; transition:all 0.2s; }
+.kpi:hover { background:rgba(255,255,255,0.08); border-color:var(--accent); }
+.kpi .kl { font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.kpi .kv { font-family:'Playfair Display',serif; font-size:28px; font-weight:800; line-height:1; }
+.kpi .ks { font-size:10px; color:var(--gray); margin-top:3px; }
+.kpi .kp { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:700; padding:2px 8px; border-radius:10px; margin-top:5px; }
+.kpi.g .kv{color:var(--green)}.kpi.g .kp{background:rgba(42,155,111,0.2);color:var(--green)}
+.kpi.a .kv{color:var(--amber)}.kpi.a .kp{background:rgba(224,155,61,0.2);color:var(--amber)}
+.kpi.r .kv{color:var(--red)}  .kpi.r .kp{background:rgba(217,79,79,0.2);color:var(--red)}
+.kpi.b .kv{color:var(--accent)}.kpi.b .kp{background:rgba(124,92,191,0.2);color:#B89EE8}
+.db-main { display:grid; grid-template-columns:1fr 308px; gap:14px; }
+.db-panel { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; overflow:hidden; }
+.dbph { padding:13px 17px; border-bottom:1px solid rgba(255,255,255,0.07); display:flex; justify-content:space-between; align-items:center; }
+.dbph h3 { font-size:13px; font-weight:600; }
+.dbph span { font-size:10px; color:var(--gray); }
+.pr { padding:13px 17px; border-bottom:1px solid rgba(255,255,255,0.05); cursor:pointer; transition:all 0.2s; display:grid; grid-template-columns:1fr 85px auto; align-items:center; gap:12px; }
+.pr:hover { background:rgba(46,143,192,0.07); }
+.pr:last-child { border-bottom:none; }
+.prn { font-size:12px; font-weight:600; }
+.prm { font-size:10px; color:var(--gray); margin-top:2px; }
+.pb-top { display:flex; justify-content:flex-end; font-size:10px; color:var(--gray); margin-bottom:3px; }
+.pb-bar { height:4px; background:rgba(255,255,255,0.08); border-radius:10px; overflow:hidden; }
+.pb-fill { height:100%; border-radius:10px; transition:width 1.2s ease; }
+.pb-fill.g{background:var(--green)}.pb-fill.a{background:var(--amber)}.pb-fill.r{background:var(--red)}
+.sb { font-size:10px; font-weight:700; padding:3px 9px; border-radius:10px; white-space:nowrap; }
+.sb.ok{background:rgba(42,155,111,0.18);color:var(--green)}.sb.warn{background:rgba(224,155,61,0.18);color:var(--amber)}.sb.danger{background:rgba(217,79,79,0.18);color:var(--red)}
+.dr { display:flex; align-items:center; gap:10px; padding:10px 17px; border-bottom:1px solid rgba(255,255,255,0.05); }
+.dr:last-child { border-bottom:none; }
+.dd { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; flex-shrink:0; }
+.dd.ok{background:rgba(42,155,111,0.2);color:var(--green)}.dd.prog{background:rgba(46,143,192,0.2);color:var(--accent)}.dd.warn{background:rgba(224,155,61,0.2);color:var(--amber)}.dd.danger{background:rgba(217,79,79,0.2);color:var(--red)}
+.di { flex:1; }
+.dn { font-size:11.5px; font-weight:500; }
+.dm { font-size:10px; color:var(--gray); margin-top:1px; }
+.ddate { font-size:10px; white-space:nowrap; }
+.ddate.ok{color:var(--green)}.ddate.soon{color:var(--amber);font-weight:600}.ddate.late{color:var(--red);font-weight:600}
+.nl-src { font-size:9px; background:rgba(124,92,191,0.2); color:#B89EE8; padding:1px 6px; border-radius:6px; margin-left:5px; }
+.cp { background:linear-gradient(160deg,rgba(20,55,95,0.7),rgba(12,31,53,0.9)); border:1px solid rgba(46,143,192,0.2); border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+.cph { padding:13px 15px; border-bottom:1px solid rgba(46,143,192,0.15); display:flex; align-items:center; gap:8px; }
+.cpd { width:7px; height:7px; background:var(--teal); border-radius:50%; animation:pulse 2s infinite; }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.cph h3 { font-size:12px; font-weight:700; color:var(--accent); }
+.cp-msgs { padding:12px; display:flex; flex-direction:column; gap:9px; flex:1; }
+.cm { background:rgba(255,255,255,0.05); border-left:2px solid var(--accent); border-radius:8px; padding:9px 12px; font-size:11px; line-height:1.6; color:#C0D0E0; animation:si 0.5s ease both; }
+.cm:nth-child(2){animation-delay:0.2s}.cm:nth-child(3){animation-delay:0.4s}.cm:nth-child(4){animation-delay:0.6s}
+@keyframes si{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+.cm strong{color:var(--amber)}.cm .ok{color:var(--green)}.cm .warn{color:var(--amber)}.cm .err{color:var(--red)}.cm .nl{color:#B89EE8}
+.cp-input { padding:11px 13px; border-top:1px solid rgba(255,255,255,0.07); }
+.cp-input-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#7C5CBF; margin-bottom:6px; }
+.cp-chips { display:flex; flex-direction:column; gap:5px; }
+.chip { padding:7px 11px; border-radius:7px; font-size:10.5px; font-weight:500; cursor:pointer; transition:all 0.2s; text-align:left; }
+.chip.nl { background:rgba(124,92,191,0.1); border:1px solid rgba(124,92,191,0.25); color:#B89EE8; }
+.chip.nl:hover { background:rgba(124,92,191,0.22); border-color:#7C5CBF; }
+.chip.bl { background:rgba(46,143,192,0.1); border:1px solid rgba(46,143,192,0.25); color:var(--accent); }
+.chip.bl:hover { background:rgba(46,143,192,0.2); border-color:var(--accent); }
+
+/* ══════════════════════════
+   VIEW 4 — ROADMAP
+══════════════════════════ */
+#view-roadmap { padding:40px 48px; }
+.rm-header { text-align:center; margin-bottom:40px; }
+.rm-header h2 { font-family:'Playfair Display',serif; font-size:36px; font-weight:800; margin-bottom:8px; }
+.rm-header p { color:var(--gray); font-size:14px; max-width:600px; margin:0 auto; line-height:1.65; }
+
+/* Phase timeline */
+.phase-bar { display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-bottom:36px; position:relative; }
+.phase-bar::before { content:''; position:absolute; top:20px; left:5%; right:5%; height:2px; background:linear-gradient(to right, var(--green), var(--accent), var(--amber), rgba(255,255,255,0.15)); z-index:0; }
+.phase { text-align:center; position:relative; z-index:1; }
+.phase-dot { width:40px; height:40px; border-radius:50%; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; border:2px solid transparent; }
+.phase-dot.done     { background:var(--green); border-color:var(--green); box-shadow:0 0 16px rgba(42,155,111,0.5); }
+.phase-dot.current  { background:var(--accent); border-color:var(--accent); box-shadow:0 0 16px rgba(46,143,192,0.5); animation:phasePulse 2s infinite; }
+.phase-dot.next     { background:rgba(224,155,61,0.2); border-color:var(--amber); color:var(--amber); }
+.phase-dot.future   { background:rgba(255,255,255,0.05); border-color:rgba(255,255,255,0.2); color:var(--gray); }
+@keyframes phasePulse { 0%,100%{box-shadow:0 0 16px rgba(46,143,192,0.5)}50%{box-shadow:0 0 28px rgba(46,143,192,0.8)} }
+.phase-name { font-size:12px; font-weight:700; margin-bottom:2px; }
+.phase-name.done    { color:var(--green); }
+.phase-name.current { color:var(--accent); }
+.phase-name.next    { color:var(--amber); }
+.phase-name.future  { color:var(--gray); }
+.phase-date { font-size:10px; color:var(--gray); }
+
+/* Feature columns */
+.rm-cols { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:32px; }
+.rm-col { }
+.rm-col-head { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.08); }
+.rm-col-head.done    { color:var(--green); }
+.rm-col-head.current { color:var(--accent); }
+.rm-col-head.next    { color:var(--amber); }
+.rm-col-head.future  { color:var(--gray); }
+
+.feat {
+  border-radius:10px; padding:12px 13px; margin-bottom:8px;
+  border:1px solid transparent; transition:all 0.25s; cursor:default;
+  position:relative;
+}
+.feat:hover { transform:translateY(-2px); filter:brightness(1.1); }
+.feat.done    { background:rgba(42,155,111,0.09); border-color:rgba(42,155,111,0.2); }
+.feat.current { background:rgba(46,143,192,0.09); border-color:rgba(46,143,192,0.25); }
+.feat.next    { background:rgba(224,155,61,0.08); border-color:rgba(224,155,61,0.2); }
+.feat.future  { background:rgba(255,255,255,0.03); border-color:rgba(255,255,255,0.08); }
+.feat .fi { font-size:16px; margin-bottom:5px; }
+.feat .fn { font-size:11.5px; font-weight:700; margin-bottom:3px; }
+.feat.done    .fn { color:var(--white); }
+.feat.current .fn { color:var(--white); }
+.feat.next    .fn { color:var(--white); }
+.feat.future  .fn { color:var(--gray); }
+.feat .fd { font-size:10.5px; color:var(--gray); line-height:1.4; }
+.feat-badge { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:700; padding:2px 7px; border-radius:8px; margin-top:6px; }
+.feat-badge.done    { background:rgba(42,155,111,0.2); color:var(--green); }
+.feat-badge.current { background:rgba(46,143,192,0.2); color:var(--accent); }
+.feat-badge.next    { background:rgba(224,155,61,0.2); color:var(--amber); }
+.feat-badge.future  { background:rgba(255,255,255,0.08); color:var(--gray); }
+.feat-votes { position:absolute; top:10px; right:10px; display:flex; align-items:center; gap:3px; font-size:10px; color:var(--gray); cursor:pointer; transition:all 0.2s; }
+.feat-votes:hover { color:var(--accent); }
+.feat-votes.voted { color:var(--accent); }
+.feat-votes .vote-icon { font-size:11px; }
+
+/* Founder CTA banner */
+.founder-banner {
+  background:linear-gradient(135deg,rgba(26,79,122,0.8),rgba(46,143,192,0.2));
+  border:1px solid rgba(46,143,192,0.4); border-radius:16px;
+  padding:28px 36px;
+  display:grid; grid-template-columns:1fr auto; gap:24px; align-items:center;
+}
+.fb-left h3 { font-family:'Playfair Display',serif; font-size:24px; font-weight:800; margin-bottom:8px; }
+.fb-left h3 span { color:var(--accent); }
+.fb-left p { font-size:13px; color:var(--gray); line-height:1.6; max-width:520px; }
+.fb-left .fb-perks { display:flex; gap:12px; margin-top:14px; flex-wrap:wrap; }
+.fb-perk { display:flex; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--white); background:rgba(255,255,255,0.07); padding:5px 11px; border-radius:20px; }
+.fb-right { text-align:center; }
+.fb-price { font-family:'Playfair Display',serif; font-size:48px; font-weight:800; color:var(--accent); line-height:1; }
+.fb-price-sub { font-size:11px; color:var(--gray); margin-bottom:14px; }
+.fb-cta-btn { background:var(--accent); color:#fff; border:none; border-radius:10px; padding:12px 24px; font-size:13px; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all 0.2s; display:block; width:100%; }
+.fb-cta-btn:hover { background:#3EA0D4; box-shadow:0 6px 20px rgba(46,143,192,0.4); transform:translateY(-1px); }
+.fb-spots { font-size:10px; color:var(--amber); margin-top:6px; font-weight:600; }
+
+/* footer */
+.pf { text-align:center; padding:20px; border-top:1px solid rgba(255,255,255,0.06); margin-top:32px; }
+.pf p { font-size:11px; color:var(--gray); }
+.pf strong { color:var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="logo">Proyecto<span>.</span>Vivo</div>
+    <div class="logo-sub">Tu agente IA de proyectos</div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="switchView('antes',this)">Antes vs Después</button>
+    <button class="nav-tab" onclick="switchView('flujo',this)">Cómo funciona el agente</button>
+    <button class="nav-tab" onclick="switchView('dashboard',this)">Vista del despacho</button>
+    <button class="nav-tab roadmap-tab" onclick="switchView('roadmap',this)">Lo que viene</button>
+  </div>
+</nav>
+
+
+<!-- ══ ANTES vs DESPUÉS ══ -->
+<div id="view-antes" class="view active">
+  <div class="av-header">
+    <h2>El mismo despacho. Antes y después.</h2>
+    <p>La diferencia no es trabajar más — es tener un agente IA que coordina lo que hoy se hace a mano: desde los planos hasta las minutas de reunión, todo en un solo lugar.</p>
+  </div>
+  <div class="av-grid">
+    <div>
+      <div class="av-col-label before">⚠️ Sin Proyecto Vivo</div>
+      <div class="av-cards">
+        <div class="av-card bad"><div class="cr"><div class="ci">📁</div><div><h4>Archivos dispersos sin versión clara</h4><p>Planos en WhatsApp, memorias en Drive, versiones sin nombre. Nadie sabe cuál es la última.</p></div></div></div>
+        <div class="av-card bad"><div class="cr"><div class="ci">📝</div><div><h4>Documentación 100% manual</h4><p>Cada cambio de plano obliga a editar a mano la memoria, especificaciones y cuadro de áreas.</p></div></div></div>
+        <div class="av-card bad"><div class="cr"><div class="ci">🗣️</div><div><h4>Minutas y decisiones que se pierden</h4><p>El cliente aprobó un cambio en reunión, pero nadie actualizó el backlog ni los documentos afectados.</p></div></div></div>
+        <div class="av-card bad"><div class="cr"><div class="ci">👔</div><div><h4>La dirección del despacho desconectada</h4><p>Las decisiones del socio no llegan al equipo de forma sistemática. Cada quien trabaja con la información que tiene.</p></div></div></div>
+        <div class="av-card bad"><div class="cr"><div class="ci">💸</div><div><h4>Cobros que se retrasan sin razón visible</h4><p>Se descubre tarde que falta un entregable. El equipo pierde días resolviendo lo que debía estar listo.</p></div></div></div>
+      </div>
+    </div>
+    <div class="av-arrow-col"><div class="av-arrow-btn">→</div></div>
+    <div>
+      <div class="av-col-label after">✓ Con Proyecto Vivo</div>
+      <div class="av-cards">
+        <div class="av-card good"><div class="cr"><div class="ci">🗂️</div><div><h4>Una sola fuente de verdad</h4><p>Versiones automáticas. Siempre claro cuál es la oficial. Cualquier miembro accede al estado real.</p></div></div></div>
+        <div class="av-card good"><div class="cr"><div class="ci">⚡</div><div><h4>Documentación generada en 15 min</h4><p>Sube tus planos PDF y cuadro de áreas. Claude genera memoria y especificaciones completas.</p></div></div></div>
+        <div class="av-card good"><div class="cr"><div class="ci">💬</div><div><h4>La minuta se convierte en pendientes automáticamente</h4><p>Comparte lo que acordaron en reunión tal como lo escribirías en un correo. El agente lee, entiende y actualiza la lista de pendientes del proyecto.</p><div class="nl-tag">✦ Escrito como siempre, procesado como nunca</div></div></div></div>
+        <div class="av-card good"><div class="cr"><div class="ci">👔</div><div><h4>Lo que dice el socio, el equipo lo ve al instante</h4><p>El socio o director comparte una decisión en texto libre. El agente identifica qué cambia en el proyecto y lo refleja sin pasos intermedios.</p><div class="nl-tag">✦ Sin reuniones de alineación extra</div></div></div></div>
+        <div class="av-card good"><div class="cr"><div class="ci">✅</div><div><h4>Cobros desbloqueados a tiempo</h4><p>Cada pago está vinculado a sus entregables. Siempre sabes exactamente qué acción desbloquea el siguiente cobro.</p></div></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="orch-banner">
+    <div class="oi">🤖</div>
+    <div>
+      <h3>El agente coordina. Tú diseñas.</h3>
+      <p>Proyecto Vivo es tu coordinador de proyectos con IA: <strong>sabe en todo momento qué está pendiente, quién lo tiene y cuándo cobras</strong>. Cuando llega la minuta de una reunión, una decisión del socio o un plano actualizado, el agente identifica qué cambió, actualiza los pendientes, regenera los documentos afectados y avisa a quien corresponde. <strong>Sin pasos manuales. Sin información perdida.</strong></p>
+    </div>
+  </div>
+  <div class="av-stats">
+    <div class="av-stat"><div class="num">15 min</div><div class="lbl">para generar documentación completa desde planos</div></div>
+    <div class="av-stat"><div class="num">−80%</div><div class="lbl">menos coordinación manual y documentación repetitiva</div></div>
+    <div class="av-stat"><div class="num">0</div><div class="lbl">decisiones perdidas que no se traduzcan en acciones</div></div>
+  </div>
+</div>
+
+
+<!-- ══ ORQUESTACIÓN ══ -->
+<div id="view-flujo" class="view">
+  <div class="fl-header">
+    <h2>Un solo mensaje. El agente hace el resto.</h2>
+    <p>La mayoría de lo que le das al agente ya lo tienes: tus planos, las notas de la reunión, lo que acordaron con el cliente. No hay formularios ni formatos especiales — escribe como siempre y el agente actúa.</p>
+    <div class="sub-tag">✦ Menos pasos manuales. Más tiempo para diseñar.</div>
+  </div>
+
+  <div class="sec-lbl">Qué le das al agente</div>
+  <div class="input-grid">
+    <div class="ig">
+      <div class="ig-title ft"><div class="dot"></div>Tus archivos de proyecto</div>
+      <div class="ii ft"><div class="icon">📐</div><div><div class="name">Planos en PDF (vectoriales)</div><div class="sub">Plantas, cortes, fachadas, instalaciones</div></div></div>
+      <div class="ii ft"><div class="icon">📊</div><div><div class="name">Cuadro de áreas en Excel</div><div class="sub">El formato que ya manejas en tu despacho</div></div></div>
+      <div class="ii err"><div class="icon">⚠️</div><div><div class="name">Plano escaneado → el agente avisa</div><div class="sub">Solo funciona con PDF vectorial; te lo indica antes de continuar</div></div></div>
+    </div>
+    <div class="ig">
+      <div class="ig-title nl"><div class="dot"></div>Lo que ya escribes en tu día a día ✦</div>
+      <div class="ii nl"><div class="icon">📋</div><div><div class="name">La minuta de la junta</div><div class="sub">El agente extrae los acuerdos y arma los pendientes del proyecto</div></div></div>
+      <div class="ii nl"><div class="icon">👔</div><div><div class="name">Decisiones del socio o director</div><div class="sub">Cambios de alcance, prioridades, autorizaciones</div></div></div>
+      <div class="ii nl"><div class="icon">💬</div><div><div class="name">Notas sueltas o instrucciones</div><div class="sub">"El cliente aprobó ampliar la cocina 2m²"</div></div></div>
+      <div class="ii nl"><div class="icon">📞</div><div><div class="name">Resumen de llamadas con el cliente</div><div class="sub">Cambios que el equipo registra después de cada conversación</div></div></div>
+    </div>
+  </div>
+
+  <!-- ═══ DIAGRAMA ANIMADO ═══ -->
+  <div class="diagram-section">
+    <div class="diagram-hero">
+      <h3>Un solo mensaje.<br><span>Seis actualizaciones al mismo tiempo.</span></h3>
+      <p>Así trabaja tu agente IA de proyectos: una nota de reunión dispara todo lo que necesita actualizarse — sin que tú tengas que hacerlo uno por uno.</p>
+      <div class="diagram-cta-arrow" onclick="runDiagram()">▶ &nbsp;Presiona para verlo en acción ↓</div>
+    </div>
+    <div class="diagram-container">
+
+      <!-- INPUT NODE -->
+      <div class="diag-input-wrapper">
+        <div class="diag-input-node" id="diagInput">
+          <div class="din-label">✦ Nota de reunión — tal como la escribirías</div>
+          <div class="din-text" id="diagText">
+            <span class="highlight">"Reunión 10 mar.</span> Cliente aprobó <span class="highlight">ampliar cocina a 14m²</span> y agregar <span class="highlight">medio baño en PB</span>. Dirección confirma <span class="highlight">2ª exhibición condicionada</span> a entrega estructural antes del 18 mar."<div class="din-cursor"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SVG LINES + TRAVELING DOTS -->
+      <svg class="diag-svg" id="diagSvg" height="90" viewBox="0 0 900 90" preserveAspectRatio="none">
+        <!-- Lines from center-top to each output node -->
+        <!-- 6 outputs, centered at ~75, 225, 375, 525, 675, 825 out of 900 -->
+        <path id="p1" class="diag-path p1" d="M450,0 Q300,50 75,88"/>
+        <path id="p2" class="diag-path p2" d="M450,0 Q390,50 225,88"/>
+        <path id="p3" class="diag-path p3" d="M450,0 Q430,50 375,88"/>
+        <path id="p4" class="diag-path p4" d="M450,0 Q470,50 525,88"/>
+        <path id="p5" class="diag-path p5" d="M450,0 Q510,50 675,88"/>
+        <path id="p6" class="diag-path p6" d="M450,0 Q600,50 825,88"/>
+        <!-- Traveling dots -->
+        <circle id="dot1" class="diag-dot" fill="rgba(46,143,192,0.9)"/>
+        <circle id="dot2" class="diag-dot" fill="rgba(42,155,111,0.9)"/>
+        <circle id="dot3" class="diag-dot" fill="rgba(224,155,61,0.9)"/>
+        <circle id="dot4" class="diag-dot" fill="rgba(217,79,79,0.9)"/>
+        <circle id="dot5" class="diag-dot" fill="rgba(29,166,160,0.9)"/>
+        <circle id="dot6" class="diag-dot" fill="rgba(176,143,232,0.9)"/>
+      </svg>
+
+      <!-- PLAY BUTTON -->
+      <div class="diag-play-row">
+        <button class="diag-play-btn" id="playBtn" onclick="runDiagram()">
+          <span class="play-icon">▶</span> Ver cómo lo procesa el agente
+        </button>
+        <div class="diag-counter">Actualizaciones al mismo tiempo: <span id="updateCount">0</span> / 6</div>
+      </div>
+
+      <!-- OUTPUT NODES -->
+      <div class="diag-outputs">
+        <div class="diag-out c1" id="out1">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">✅</div>
+          <div class="do-name">Backlog actualizado</div>
+          <div class="do-sub">4 tareas nuevas agregadas</div>
+        </div>
+        <div class="diag-out c2" id="out2">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">📄</div>
+          <div class="do-name">Memoria descriptiva</div>
+          <div class="do-sub">Sección cocina y PB marcada para regenerar</div>
+        </div>
+        <div class="diag-out c3" id="out3">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">📐</div>
+          <div class="do-name">Cuadro de áreas</div>
+          <div class="do-sub">Ajuste: +2m² cocina, +4m² PB</div>
+        </div>
+        <div class="diag-out c4" id="out4">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">💰</div>
+          <div class="do-name">Fecha de cobro</div>
+          <div class="do-sub">2ª exhibición vinculada al 18 mar</div>
+        </div>
+        <div class="diag-out c5" id="out5">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">🔔</div>
+          <div class="do-name">Alerta de riesgo</div>
+          <div class="do-sub">Externo estructural notificado</div>
+        </div>
+        <div class="diag-out c6" id="out6">
+          <div class="do-badge">✓</div>
+          <div class="do-icon">🔧</div>
+          <div class="do-name">Especificaciones</div>
+          <div class="do-sub">Partidas cocina y sanitario marcadas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Cómo trabaja el agente</div>
+  <div class="engine-box">
+    <div class="engine-title">Proyecto<span>.</span>Vivo</div>
+    <div class="engine-sub">Tu coordinador de proyectos con IA · Powered by Claude · Siempre actualizado</div>
+    <div class="engine-procs">
+      <div class="ep"><div class="ep-dot">1</div><p>Lee tus planos PDF y extrae la información del proyecto</p></div>
+      <div class="ep nl-ep"><div class="ep-dot">2</div><p>Entiende lo que escribes y lo convierte en acciones concretas</p></div>
+      <div class="ep"><div class="ep-dot">3</div><p>Construye una memoria viva del estado del proyecto</p></div>
+      <div class="ep nl-ep"><div class="ep-dot">4</div><p>Arma y actualiza los pendientes desde minutas y decisiones</p></div>
+      <div class="ep"><div class="ep-dot">5</div><p>Regenera los documentos afectados cuando algo cambia</p></div>
+      <div class="ep nl-ep"><div class="ep-dot">6</div><p>Detecta riesgos de entrega y avisa antes de que impacten</p></div>
+      <div class="ep"><div class="ep-dot">7</div><p>Vincula cada entregable con la exhibición de cobro que depende de él</p></div>
+      <div class="ep nl-ep"><div class="ep-dot">8</div><p>Responde preguntas del equipo sobre el estado del proyecto</p></div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">Qué genera el agente para ti</div>
+  <div class="output-grid">
+    <div class="oi"><div class="oic">📄</div><div class="oin">Memoria descriptiva</div><div class="ois">Lista para revisar, firmar y entregar</div></div>
+    <div class="oi"><div class="oic">🔧</div><div class="oin">Especificaciones técnicas</div><div class="ois">Por partida constructiva, listas para obra</div></div>
+    <div class="oi"><div class="oic">📐</div><div class="oin">Cuadro de áreas oficial</div><div class="ois">COS y CUS calculados automáticamente</div></div>
+    <div class="oi"><div class="oic">✅</div><div class="oin">Lista de pendientes del proyecto</div><div class="ois">Desde planos, minutas y decisiones del despacho</div></div>
+    <div class="oi"><div class="oic">🔔</div><div class="oin">Alertas de riesgo de entrega</div><div class="ois">El agente avisa antes de que un retraso afecte el cobro</div></div>
+    <div class="oi"><div class="oic">💰</div><div class="oin">Estado de exhibiciones de cobro</div><div class="ois">Qué entregable falta para liberar el siguiente pago</div></div>
+  </div>
+</div>
+
+
+<!-- ══ DASHBOARD ══ -->
+<div id="view-dashboard" class="view">
+  <div class="db-top">
+    <div><h2>Buenos días, Arq. Ramírez</h2><p>Lunes 9 de marzo, 2026 · 3 proyectos activos · 1 alerta urgente</p></div>
+    <div class="db-badge">Vista previa del producto</div>
+  </div>
+  <div class="db-kpis">
+    <div class="kpi g"><div class="kl">Próximo cobro</div><div class="kv">$45K</div><div class="ks">Casa Pedregal · 2ª exhibición</div><div class="kp">⏳ 3 entregables pendientes</div></div>
+    <div class="kpi a"><div class="kl">En riesgo esta semana</div><div class="kv">2</div><div class="ks">entregables sin avance</div><div class="kp">⚠️ Requieren acción hoy</div></div>
+    <div class="kpi r"><div class="kl">Cobros vencidos</div><div class="kv">$36K</div><div class="ks">Remodelación Coyoacán</div><div class="kp">🔴 18 días vencido</div></div>
+    <div class="kpi b"><div class="kl">Pendientes actualizados hoy</div><div class="kv">4</div><div class="ks">tareas desde la minuta de ayer</div><div class="kp">✦ El agente los armó solo</div></div>
+  </div>
+  <div class="db-main">
+    <div style="display:flex;flex-direction:column;gap:12px;">
+      <div class="db-panel">
+        <div class="dbph"><h3>Proyectos activos</h3><span>Ver todos →</span></div>
+        <div class="pr"><div><div class="prn">Casa Pedregal</div><div class="prm">Proyecto ejecutivo · Jorge, Sofía, Ext. Estructural</div></div><div><div class="pb-top">65%</div><div class="pb-bar"><div class="pb-fill a" style="width:65%"></div></div></div><div class="sb warn">⚠️ En riesgo</div></div>
+        <div class="pr"><div><div class="prn">Oficinas Polanco</div><div class="prm">Anteproyecto · María, Carlos</div></div><div><div class="pb-top">40%</div><div class="pb-bar"><div class="pb-fill g" style="width:40%"></div></div></div><div class="sb ok">✓ Al corriente</div></div>
+        <div class="pr"><div><div class="prn">Remodelación Coyoacán</div><div class="prm">Entrega final · Arq. Ramírez</div></div><div><div class="pb-top">90%</div><div class="pb-bar"><div class="pb-fill r" style="width:90%"></div></div></div><div class="sb danger">🔴 Cobro vencido</div></div>
+      </div>
+      <div class="db-panel">
+        <div class="dbph"><h3>Casa Pedregal · Pendientes del proyecto</h3><span>12 de 18 · ✦ 4 armados por el agente hoy</span></div>
+        <div class="dr"><div class="dd ok">✓</div><div class="di"><div class="dn">Planta arquitectónica PB</div><div class="dm">v3 · Jorge · 9 mar</div></div><div class="ddate ok">Entregado</div></div>
+        <div class="dr"><div class="dd prog">↻</div><div class="di"><div class="dn">Plano hidráulico y sanitario</div><div class="dm">v1 · En proceso · Sofía</div></div><div class="ddate soon">Vence 14 mar</div></div>
+        <div class="dr"><div class="dd warn">!</div><div class="di"><div class="dn">Ampliación cocina a 14m² <span class="nl-src">✦ minuta</span></div><div class="dm">Agregado automáticamente · Reunión 9 mar · Jorge</div></div><div class="ddate soon">Vence 16 mar</div></div>
+        <div class="dr"><div class="dd warn">!</div><div class="di"><div class="dn">Medio baño en PB <span class="nl-src">✦ minuta</span></div><div class="dm">Decisión cliente · Reunión 9 mar · Sofía</div></div><div class="ddate soon">Vence 19 mar</div></div>
+        <div class="dr"><div class="dd danger">✕</div><div class="di"><div class="dn">Memoria de cálculo estructural</div><div class="dm">Sin avance · 6 días · Ext. Estructural</div></div><div class="ddate late">Vence 18 mar</div></div>
+        <div class="dr"><div class="dd ok">✓</div><div class="di"><div class="dn">Especificaciones técnicas</div><div class="dm">Generado por el agente · v2 · 7 mar</div></div><div class="ddate ok">Aprobado</div></div>
+      </div>
+    </div>
+    <div class="cp">
+      <div class="cph"><div class="cpd"></div><h3>Agente IA · Proyecto Vivo</h3></div>
+      <div class="cp-msgs">
+        <div class="cm"><strong>Minuta 9 mar procesada:</strong> Encontré <span class="nl">2 cambios de alcance</span> y <span class="nl">1 fecha de entrega comprometida</span>. Agregué 4 pendientes al proyecto y marqué la memoria descriptiva como desactualizada.</div>
+        <div class="cm"><strong>Casa Pedregal:</strong> El cobro de <span class="warn">$45,000</span> depende de la memoria estructural. El externo lleva <span class="err">6 días sin avance</span>. Si no hay movimiento hoy, el cobro se mueve 2 semanas.</div>
+        <div class="cm"><strong>Riesgo de entrega:</strong> La fecha del <span class="warn">25 mar</span> para la 2ª exhibición requiere planos estructurales antes del 18 mar. <span class="err">Hoy es el último día</span> para confirmar con el externo.</div>
+        <div class="cm"><strong>Coyoacán:</strong> Proyecto al <span class="ok">90%</span> pero cobro final con <span class="err">18 días vencido</span>. Sugiero generar el reporte de avance ahora y enviarlo al cliente.</div>
+      </div>
+      <div class="cp-input">
+        <div class="cp-input-lbl">✦ Escribe en lenguaje natural</div>
+        <div class="cp-chips">
+          <div class="chip nl">¿Qué riesgos tiene Casa Pedregal esta semana?</div>
+          <div class="chip nl">"El cliente aprobó cambiar acabado de fachada"</div>
+          <div class="chip nl">¿Qué falta para cobrar el 25 de marzo?</div>
+          <div class="chip bl">Genera reporte de avance de Coyoacán</div>
+          <div class="chip bl">¿Estamos en tiempo para entregar el 30 de abril?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ ROADMAP ══ -->
+<div id="view-roadmap" class="view">
+  <div class="rm-header">
+    <h2>Lo que estamos construyendo.</h2>
+    <p>Los despachos fundadores no solo acceden primero — le dan forma al agente. Cada función nueva se construye con la retroalimentación de quienes lo usan desde el inicio.</p>
+  </div>
+
+  <!-- PHASE TIMELINE -->
+  <div class="phase-bar">
+    <div class="phase">
+      <div class="phase-dot done">✓</div>
+      <div class="phase-name done">Ya disponible</div>
+      <div class="phase-date">Úsalo hoy</div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot current">⚡</div>
+      <div class="phase-name current">Q2 · 2026</div>
+      <div class="phase-date">En construcción</div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot next">◎</div>
+      <div class="phase-name next">Q3 · 2026</div>
+      <div class="phase-date">Próximamente</div>
+    </div>
+    <div class="phase">
+      <div class="phase-dot future">○</div>
+      <div class="phase-name future">2027+</div>
+      <div class="phase-date">Hacia dónde vamos</div>
+    </div>
+  </div>
+
+  <!-- FEATURE COLUMNS -->
+  <div class="rm-cols">
+
+    <!-- MVP: DISPONIBLE -->
+    <div class="rm-col">
+    <div class="rm-col-head done">✓ Ya disponible</div>
+
+      <div class="feat done">
+        <div class="fi">📄</div>
+        <div class="fn">Memoria descriptiva automática</div>
+        <div class="fd">Desde tus planos PDF y cuadro de áreas, lista en 15 minutos.</div>
+        <div class="feat-badge done">✓ Listo</div>
+      </div>
+      <div class="feat done">
+        <div class="fi">🔧</div>
+        <div class="fn">Especificaciones técnicas por partida</div>
+        <div class="fd">Listas para firmar y entregar al constructor o cliente.</div>
+        <div class="feat-badge done">✓ Listo</div>
+      </div>
+      <div class="feat done">
+        <div class="fi">✅</div>
+        <div class="fn">Pendientes desde la minuta de reunión</div>
+        <div class="fd">El agente lee lo que acordaron y arma la lista de pendientes del proyecto.</div>
+        <div class="feat-badge done">✓ Listo</div>
+      </div>
+      <div class="feat done">
+        <div class="fi">💰</div>
+        <div class="fn">Control de exhibiciones de cobro</div>
+        <div class="fd">Siempre visible qué falta para liberar el siguiente pago.</div>
+        <div class="feat-badge done">✓ Listo</div>
+      </div>
+      <div class="feat done">
+        <div class="fi">🔔</div>
+        <div class="fn">Alertas de riesgo de entrega</div>
+        <div class="fd">El agente detecta retrasos antes de que afecten el cobro.</div>
+        <div class="feat-badge done">✓ Listo</div>
+      </div>
+    </div>
+
+    <!-- Q2: EN DESARROLLO -->
+    <div class="rm-col">
+      <div class="rm-col-head current">⚡ En construcción — Q2 2026</div>
+
+      <div class="feat current">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">24</span></div>
+        <div class="fi">🏛️</div>
+        <div class="fn">Prellenado de trámites por municipio</div>
+        <div class="fd">Manifiesto de construcción, corresponsabilidades y uso de suelo con datos del proyecto ya cargados. CDMX primero.</div>
+        <div class="feat-badge current">⚡ En progreso</div>
+      </div>
+      <div class="feat current">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">19</span></div>
+        <div class="fi">📊</div>
+        <div class="fn">Dashboard de rentabilidad del despacho</div>
+        <div class="fd">Horas estimadas vs reales por proyecto. Costo de cada colaborador. Proyectos más y menos rentables.</div>
+        <div class="feat-badge current">⚡ En progreso</div>
+      </div>
+      <div class="feat current">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">15</span></div>
+        <div class="fi">🔄</div>
+        <div class="fn">Actualización automática de documentos</div>
+        <div class="fd">Cambias un plano y el agente actualiza la memoria, especificaciones y cuadro de áreas que se vieron afectados.</div>
+        <div class="feat-badge current">⚡ En progreso</div>
+      </div>
+      <div class="feat current">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">12</span></div>
+        <div class="fi">📱</div>
+        <div class="fn">App móvil (iOS + Android)</div>
+        <div class="fd">Alertas, consultas al agente y aprobaciones desde el celular. El arquitecto siempre conectado.</div>
+        <div class="feat-badge current">⚡ En progreso</div>
+      </div>
+    </div>
+
+    <!-- Q3: PRÓXIMO -->
+    <div class="rm-col">
+      <div class="rm-col-head next">◎ Próximamente — Q3 2026</div>
+
+      <div class="feat next">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">31</span></div>
+        <div class="fi">🤝</div>
+        <div class="fn">Acceso del cliente al avance</div>
+        <div class="fd">El cliente ve el estado real del proyecto y puede aprobar entregables desde un link. Sin acceso al sistema interno del despacho.</div>
+        <div class="feat-badge next">◎ Planeado</div>
+      </div>
+      <div class="feat next">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">27</span></div>
+        <div class="fi">📝</div>
+        <div class="fn">Generación de contratos</div>
+        <div class="fd">Contrato de servicios profesionales y de obra pre-llenados con datos del proyecto. Con firma electrónica.</div>
+        <div class="feat-badge next">◎ Planeado</div>
+      </div>
+
+      <div class="feat next">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">14</span></div>
+        <div class="fi">💬</div>
+        <div class="fn">Conversaciones del equipo por proyecto</div>
+        <div class="fd">El agente participa en los chats del proyecto, recuerda lo que se decidió y actúa sobre lo que se dice.</div>
+        <div class="feat-badge next">◎ Planeado</div>
+      </div>
+    </div>
+
+    <!-- 2026+: VISIÓN -->
+    <div class="rm-col">
+      <div class="rm-col-head future">○ Hacia dónde vamos — 2027+</div>
+
+      <div class="feat future">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">8</span></div>
+        <div class="fi">🏗️</div>
+        <div class="fn">Presupuesto automático por partida</div>
+        <div class="fd">Desde las especificaciones generadas, el sistema estima costos por partida constructiva con precios de mercado México.</div>
+        <div class="feat-badge future">○ Visión</div>
+      </div>
+      <div class="feat future">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">7</span></div>
+        <div class="fi">🌐</div>
+        <div class="fn">Red de corresponsables verificados</div>
+        <div class="fd">Directorio de DROs, corresponsables y especialistas validados por zona. El despacho encuentra y contrata desde la plataforma.</div>
+        <div class="feat-badge future">○ Visión</div>
+      </div>
+      <div class="feat future">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">6</span></div>
+        <div class="fi">📈</div>
+        <div class="fn">Comparativa de tiempos entre despachos</div>
+        <div class="fd">¿Cuánto tarda en promedio un proyecto ejecutivo de tu tamaño? Compara con el mercado usando datos anónimos.</div>
+        <div class="feat-badge future">○ Visión</div>
+      </div>
+      <div class="feat future">
+        <div class="feat-votes" onclick="vote(this)"><span class="vote-icon">▲</span><span class="vote-num">5</span></div>
+        <div class="fi">🤖</div>
+        <div class="fn">Agente proactivo multi-proyecto</div>
+        <div class="fd">El sistema detecta patrones de riesgo entre proyectos y sugiere acciones preventivas antes de que ocurran los retrasos.</div>
+        <div class="feat-badge future">○ Visión</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOUNDER CTA -->
+  <div class="founder-banner">
+    <div class="fb-left">
+      <h3>Entra como <span>Fundador</span> y da forma al agente.</h3>
+      <p>Los primeros 20 despachos tienen precio fijo para siempre y acceso directo al equipo. Tu experiencia real decide qué se construye primero — y qué funciones del agente se desarrollan antes.</p>
+      <div class="fb-perks">
+        <div class="fb-perk">⭐ $999 MXN/mes para siempre</div>
+        <div class="fb-perk">🗳️ Voto directo en lo que se construye</div>
+        <div class="fb-perk">🚀 Acceso anticipado a cada función nueva</div>
+        <div class="fb-perk">🛡️ 30 días de garantía</div>
+      </div>
+    </div>
+    <div class="fb-right">
+      <div class="fb-price">$999</div>
+      <div class="fb-price-sub">MXN / mes · precio fijo para siempre</div>
+      <button class="fb-cta-btn" onclick="alert('¡Nos ponemos en contacto contigo!')">Reservar lugar fundador →</button>
+      <div class="fb-spots">⚡ Quedan 14 de 20 lugares disponibles</div>
+    </div>
+  </div>
+</div>
+
+
+<div class="pf"><p><strong>Proyecto Vivo</strong> · Tu agente IA de proyectos para despachos de arquitectura e ingeniería en México · 2026</p></div>
+
+<script>
+/* ─── Nav ─── */
+function switchView(view, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + view).classList.add('active');
+  btn.classList.add('active');
+
+  if (view === 'flujo') resetDiagram();
+}
+
+/* ─── Progress bars ─── */
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.querySelectorAll('.pb-fill').forEach(b => {
+      const w = b.style.width; b.style.width = '0%';
+      setTimeout(() => b.style.width = w, 150);
+    });
+  }, 400);
+});
+
+/* ─── Diagram animation ─── */
+let diagramRunning = false;
+let updateCount = 0;
+
+function resetDiagram() {
+  diagramRunning = false;
+  updateCount = 0;
+  document.getElementById('updateCount').textContent = '0';
+  document.getElementById('playBtn').disabled = false;
+  document.getElementById('playBtn').innerHTML = '<span class="play-icon">▶</span> Ver cómo lo procesa el agente';
+
+  // Reset paths
+  for (let i = 1; i <= 6; i++) {
+    const p = document.getElementById('p' + i);
+    if (p) { p.classList.remove('active'); }
+    const d = document.getElementById('dot' + i);
+    if (d) { d.classList.remove('active'); d.setAttribute('cx', 0); d.setAttribute('cy', 0); }
+    const o = document.getElementById('out' + i);
+    if (o) { o.classList.remove('lit', 'just-lit'); }
+  }
+}
+
+function getPathPoint(pathId, t) {
+  const path = document.getElementById(pathId);
+  if (!path) return { x: 0, y: 0 };
+  const len = path.getTotalLength();
+  const pt = path.getPointAtLength(len * t);
+  // Scale from viewBox (0-900 x 0-90) to actual SVG pixels
+  const svg = document.getElementById('diagSvg');
+  const rect = svg.getBoundingClientRect();
+  return {
+    x: (pt.x / 900) * rect.width,
+    y: (pt.y / 90) * rect.height
+  };
+}
+
+function animateDot(dotId, pathId, delay, outputId, colorClass) {
+  setTimeout(() => {
+    const dot = document.getElementById(dotId);
+    const out = document.getElementById(outputId);
+    dot.classList.add('active');
+
+    const duration = 700;
+    const start = performance.now();
+
+    function step(now) {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      const pt = getPathPoint(pathId, eased);
+      dot.setAttribute('cx', pt.x);
+      dot.setAttribute('cy', pt.y);
+
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        dot.classList.remove('active');
+        out.classList.add('lit', colorClass, 'just-lit');
+        updateCount++;
+        document.getElementById('updateCount').textContent = updateCount;
+        setTimeout(() => out.classList.remove('just-lit'), 900);
+
+        if (updateCount === 6) {
+          document.getElementById('playBtn').disabled = false;
+          document.getElementById('playBtn').innerHTML = '<span class="play-icon">↺</span> Ver de nuevo';
+          diagramRunning = false;
+        }
+      }
+    }
+    requestAnimationFrame(step);
+  }, delay);
+}
+
+function runDiagram() {
+  if (diagramRunning) return;
+  diagramRunning = true;
+  resetDiagram();
+
+  // Stagger path drawing with CSS
+  const pathDelays = [0, 80, 160, 240, 320, 400];
+  for (let i = 1; i <= 6; i++) {
+    const p = document.getElementById('p' + i);
+    setTimeout(() => p.classList.add('active'), pathDelays[i - 1]);
+  }
+
+  document.getElementById('playBtn').disabled = true;
+  document.getElementById('playBtn').innerHTML = '<span class="play-icon">⟳</span> Propagando...';
+
+  // Stagger dot animations
+  const colors = ['c1','c2','c3','c4','c5','c6'];
+  const delays = [400, 550, 700, 700, 550, 400];
+  for (let i = 1; i <= 6; i++) {
+    animateDot('dot' + i, 'p' + i, delays[i-1], 'out' + i, colors[i-1]);
+  }
+}
+
+/* ─── Vote on features ─── */
+function vote(el) {
+  if (el.classList.contains('voted')) return;
+  el.classList.add('voted');
+  const numEl = el.querySelector('.vote-num');
+  numEl.textContent = parseInt(numEl.textContent) + 1;
+  el.querySelector('.vote-icon').textContent = '▲';
+}
+</script>
+<!-- WHATSAPP FLOTANTE -->
+<a href="https://wa.me/525587662865?text=Hola%2C%20vi%20Proyecto%20Vivo%20y%20me%20interesa%20saber%20m%C3%A1s%20sobre%20el%20plan%20fundador." 
+   target="_blank" class="wa-btn" title="Hablar con el equipo">
+  <svg viewBox="0 0 24 24" fill="currentColor" width="26" height="26">
+    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+    <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.532 5.854L.057 23.882l6.186-1.452A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-5.003-1.37l-.36-.214-3.722.873.937-3.62-.234-.373A9.798 9.798 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/>
+  </svg>
+  <span>Hablar con el equipo</span>
+</a>
+
+<style>
+.wa-btn {
+  position: fixed; bottom: 28px; right: 28px; z-index: 999;
+  display: flex; align-items: center; gap: 10px;
+  background: #25D366; color: #fff;
+  padding: 12px 20px 12px 16px; border-radius: 50px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 700;
+  text-decoration: none; box-shadow: 0 4px 20px rgba(37,211,102,0.45);
+  transition: all 0.25s; white-space: nowrap;
+  animation: waEntrance 0.6s 1s ease both;
+}
+.wa-btn:hover { background: #20c05a; transform: translateY(-2px); box-shadow: 0 8px 28px rgba(37,211,102,0.5); }
+@keyframes waEntrance { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+</style>
+
+</body>
+</html>
