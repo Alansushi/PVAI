@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Proyecto Vivo · Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=DM+Mono:wght@400;500&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#0C1F35;--blue:#1A4F7A;--accent:#2E8FC0;--teal:#1DA6A0;--amber:#E09B3D;--red:#D94F4F;--green:#2A9B6F;--purple:#7C5CBF;--white:#F8FAFB;--gray:#8A9BB0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--navy);font-family:'DM Sans',sans-serif;color:var(--white);min-height:100vh;overflow-x:hidden;}
+
+/* NAV */
+nav{display:flex;justify-content:space-between;align-items:center;padding:14px 32px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(12,31,53,0.97);backdrop-filter:blur(12px);position:sticky;top:0;z-index:200;}
+.logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;}
+.logo span{color:var(--accent);}
+.logo-sub{font-size:10px;color:var(--gray);margin-top:1px;}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.demo-badge{background:rgba(224,155,61,0.2);border:1px solid rgba(224,155,61,0.4);color:var(--amber);font-size:11px;font-weight:700;padding:5px 14px;border-radius:20px;}
+/* WA button in nav */
+.wa-nav{display:flex;align-items:center;gap:7px;background:#25D366;color:#fff;padding:6px 14px 6px 10px;border-radius:20px;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:700;text-decoration:none;transition:all 0.2s;}
+.wa-nav:hover{background:#20c05a;transform:translateY(-1px);}
+
+/* LAYOUT */
+.app{display:grid;grid-template-columns:210px 1fr 295px;height:calc(100vh - 57px);overflow:hidden;}
+
+/* SIDEBAR */
+.sidebar{background:rgba(0,0,0,0.2);border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow-y:auto;}
+.sidebar-section{padding:18px 14px 7px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--gray);}
+.proj-item{padding:8px 14px;cursor:pointer;transition:all 0.15s;border-left:3px solid transparent;display:flex;align-items:center;gap:9px;}
+.proj-item:hover{background:rgba(255,255,255,0.04);}
+.proj-item.active{background:rgba(46,143,192,0.1);border-color:var(--accent);}
+.proj-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.proj-dot.warn{background:var(--amber);}.proj-dot.ok{background:var(--green);}.proj-dot.danger{background:var(--red);}
+.proj-name{font-size:12px;font-weight:600;}.proj-type{font-size:10px;color:var(--gray);}
+.sidebar-div{height:1px;background:rgba(255,255,255,0.06);margin:7px 14px;}
+.sidebar-action{padding:8px 14px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:9px;font-size:12px;color:var(--gray);border:none;background:transparent;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
+.sidebar-action:hover{color:var(--white);background:rgba(255,255,255,0.04);}
+
+/* MAIN */
+.main{overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+
+/* Topbar */
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;}
+.topbar h1{font-family:'Playfair Display',serif;font-size:21px;font-weight:800;}
+.topbar .sub{font-size:11px;color:var(--gray);margin-top:2px;}
+.topbar-actions{display:flex;gap:7px;align-items:center;}
+.btn-sec{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:var(--white);border-radius:7px;padding:6px 12px;font-size:11px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-sec:hover{background:rgba(255,255,255,0.1);}
+.btn-pri{background:var(--accent);border:none;color:#fff;border-radius:7px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;font-family:'DM Sans',sans-serif;}
+.btn-pri:hover{background:#3EA0D4;}
+
+/* TEAM */
+.team-row{display:flex;align-items:center;gap:5px;}
+.avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;border:2px solid var(--navy);cursor:pointer;transition:all 0.2s;position:relative;flex-shrink:0;text-decoration:none;}
+.avatar:hover{transform:translateY(-3px);z-index:10;border-color:rgba(255,255,255,0.4);}
+.avatar-tooltip{position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);background:#0F2A45;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:6px 10px;font-size:10px;white-space:nowrap;pointer-events:none;opacity:0;transition:opacity 0.2s;z-index:100;}
+.avatar-tooltip .at-name{font-weight:700;margin-bottom:1px;}.avatar-tooltip .at-role{color:var(--gray);}
+.avatar:hover .avatar-tooltip{opacity:1;}
+.avatar-add{width:30px;height:30px;border-radius:50%;border:2px dashed rgba(255,255,255,0.2);display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--gray);cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.03);}
+.avatar-add:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px);}
+.team-label{font-size:10px;color:var(--gray);margin-left:3px;}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;}
+.kpi{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:11px;padding:12px 14px;cursor:pointer;transition:all 0.2s;}
+.kpi:hover{border-color:var(--accent);background:rgba(255,255,255,0.07);}
+.kpi .kl{font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+.kpi .kv{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;line-height:1;}
+.kpi .ks{font-size:10px;color:var(--gray);margin-top:2px;}
+.kpi .kp{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:2px 6px;border-radius:7px;margin-top:4px;}
+.kpi.g .kv{color:var(--green)}.kpi.g .kp{background:rgba(42,155,111,0.2);color:var(--green)}
+.kpi.a .kv{color:var(--amber)}.kpi.a .kp{background:rgba(224,155,61,0.2);color:var(--amber)}
+.kpi.r .kv{color:var(--red)}.kpi.r .kp{background:rgba(217,79,79,0.2);color:var(--red)}
+.kpi.b .kv{color:var(--accent)}.kpi.b .kp{background:rgba(46,143,192,0.2);color:var(--accent)}
+
+/* Panels */
+.panel{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:13px;overflow:hidden;}
+.panel-head{padding:10px 15px;border-bottom:1px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between;align-items:center;}
+.panel-head h3{font-size:12px;font-weight:600;}
+.panel-head .ph-right{display:flex;align-items:center;gap:8px;}
+.panel-head span{font-size:10px;color:var(--gray);cursor:pointer;}
+.panel-head span:hover{color:var(--accent);}
+.ph-btn{background:rgba(46,143,192,0.15);border:1px solid rgba(46,143,192,0.3);color:var(--accent);border-radius:6px;padding:4px 10px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.ph-btn:hover{background:rgba(46,143,192,0.25);}
+.ph-btn.green{background:rgba(42,155,111,0.15);border-color:rgba(42,155,111,0.3);color:var(--green);}
+.ph-btn.green:hover{background:rgba(42,155,111,0.25);}
+
+/* Project rows */
+.proj-row{padding:10px 15px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:all 0.2s;display:grid;grid-template-columns:1fr 75px auto;align-items:center;gap:10px;}
+.proj-row:hover{background:rgba(46,143,192,0.07);}
+.proj-row:last-child{border-bottom:none;}
+.proj-row.selected{background:rgba(46,143,192,0.1);border-left:2px solid var(--accent);}
+.prn{font-size:12px;font-weight:600;}.prm{font-size:10px;color:var(--gray);margin-top:2px;}
+.prog-top{font-size:10px;color:var(--gray);text-align:right;margin-bottom:3px;}
+.prog-bar{height:4px;background:rgba(255,255,255,0.08);border-radius:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:10px;transition:width 1s ease;}
+.prog-fill.g{background:var(--green)}.prog-fill.a{background:var(--amber)}.prog-fill.r{background:var(--red)}
+.sbadge{font-size:10px;font-weight:700;padding:3px 7px;border-radius:7px;white-space:nowrap;}
+.sbadge.ok{background:rgba(42,155,111,0.18);color:var(--green)}.sbadge.warn{background:rgba(224,155,61,0.18);color:var(--amber)}.sbadge.danger{background:rgba(217,79,79,0.18);color:var(--red)}
+
+/* ── GANTT ── */
+.gantt-scroll{max-height:220px;overflow-y:auto;}
+.gantt-row{display:grid;grid-template-columns:155px 1fr;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;min-height:34px;}
+.gantt-row:last-child{border-bottom:none;}
+.gantt-row:hover{background:rgba(255,255,255,0.02);}
+.gantt-row.header-row{border-bottom:1px solid rgba(255,255,255,0.07);background:rgba(0,0,0,0.1);position:sticky;top:0;z-index:5;}
+.gantt-label{padding:6px 15px;font-size:11px;color:var(--white);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.gantt-label small{display:block;font-size:9px;color:var(--gray);margin-top:1px;}
+.gantt-label.header{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);}
+.gantt-track{position:relative;height:34px;}
+.gantt-dates-row{display:flex;}
+.gantt-date-cell{font-size:8px;font-weight:700;text-transform:uppercase;color:var(--gray);text-align:center;padding:8px 0;}
+.gantt-today-line{position:absolute;top:0;bottom:0;width:1.5px;background:rgba(46,143,192,0.7);z-index:3;}
+.gantt-today-line::after{content:'HOY';position:absolute;top:3px;left:3px;font-size:7px;font-weight:700;color:var(--accent);white-space:nowrap;}
+/* Deadline line */
+.gantt-deadline{position:absolute;top:0;bottom:0;width:2px;background:rgba(217,79,79,0.85);z-index:3;}
+.gantt-deadline::after{content:attr(data-label);position:absolute;top:3px;right:3px;font-size:7px;font-weight:700;color:var(--red);white-space:nowrap;}
+.gantt-bar{position:absolute;height:15px;top:50%;transform:translateY(-50%);border-radius:4px;font-size:8px;font-weight:700;display:flex;align-items:center;padding:0 5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;transition:all 0.4s ease;cursor:pointer;}
+.gantt-bar:hover{filter:brightness(1.2);height:17px;}
+.gantt-bar.ok{background:rgba(42,155,111,0.85);color:#fff;}
+.gantt-bar.prog{background:rgba(46,143,192,0.85);color:#fff;}
+.gantt-bar.warn{background:rgba(224,155,61,0.9);color:#000;}
+.gantt-bar.danger{background:rgba(217,79,79,0.9);color:#fff;}
+
+/* ── KANBAN BOARD (deliverables) ── */
+.kanban{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0;border-top:1px solid rgba(255,255,255,0.07);}
+.kanban-col{border-right:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;min-height:180px;}
+.kanban-col:last-child{border-right:none;}
+.kanban-col-head{padding:8px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,0.06);position:sticky;top:0;z-index:2;}
+.kcol-g .kanban-col-head{background:rgba(42,155,111,0.08);}
+.kcol-a .kanban-col-head{background:rgba(224,155,61,0.08);}
+.kcol-r .kanban-col-head{background:rgba(217,79,79,0.08);}
+.kcol-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;display:flex;align-items:center;gap:5px;}
+.kcol-g .kcol-title{color:var(--green);}
+.kcol-a .kcol-title{color:var(--amber);}
+.kcol-r .kcol-title{color:var(--red);}
+.kcol-count{font-size:9px;font-weight:700;padding:1px 6px;border-radius:8px;}
+.kcol-g .kcol-count{background:rgba(42,155,111,0.2);color:var(--green);}
+.kcol-a .kcol-count{background:rgba(224,155,61,0.2);color:var(--amber);}
+.kcol-r .kcol-count{background:rgba(217,79,79,0.2);color:var(--red);}
+.kcol-add{background:none;border:none;color:var(--gray);font-size:16px;cursor:pointer;line-height:1;padding:0 2px;transition:color 0.15s;}
+.kcol-add:hover{color:var(--white);}
+.kanban-items{padding:8px;display:flex;flex-direction:column;gap:5px;flex:1;}
+.kcard{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 10px;cursor:pointer;transition:all 0.2s;}
+.kcard:hover{background:rgba(255,255,255,0.07);transform:translateY(-1px);border-color:rgba(255,255,255,0.15);}
+.kcol-g .kcard{border-left:2px solid rgba(42,155,111,0.5);}
+.kcol-a .kcard{border-left:2px solid rgba(224,155,61,0.5);}
+.kcol-r .kcard{border-left:2px solid rgba(217,79,79,0.5);}
+.kcard-name{font-size:11px;font-weight:600;margin-bottom:4px;line-height:1.3;}
+.kcard-meta{font-size:9px;color:var(--gray);display:flex;align-items:center;gap:4px;flex-wrap:wrap;}
+.kcard-owner{color:var(--accent);font-weight:600;text-decoration:none;font-size:9px;}
+.kcard-owner:hover{text-decoration:underline;}
+.kcard-date{font-size:9px;font-weight:700;padding:1px 5px;border-radius:4px;margin-left:auto;}
+.kcol-g .kcard-date{color:var(--green);background:rgba(42,155,111,0.15);}
+.kcol-a .kcard-date{color:var(--amber);background:rgba(224,155,61,0.15);}
+.kcol-r .kcard-date{color:var(--red);background:rgba(217,79,79,0.15);}
+.nl-src{font-size:8px;background:rgba(124,92,191,0.2);color:#B89EE8;padding:1px 4px;border-radius:4px;}
+.kcard.new-item{animation:newItem 0.5s ease both;}
+@keyframes newItem{from{opacity:0;transform:translateY(-8px);background:rgba(124,92,191,0.2)}to{opacity:1;transform:translateY(0);background:rgba(255,255,255,0.04)}}
+
+/* AGENT PANEL */
+.agent-panel{border-left:1px solid rgba(255,255,255,0.06);display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(15,45,74,0.5),rgba(12,31,53,0.8));}
+.agent-head{padding:12px 15px;border-bottom:1px solid rgba(46,143,192,0.15);display:flex;align-items:center;gap:7px;flex-shrink:0;}
+.agent-dot{width:7px;height:7px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(29,166,160,0.4)}50%{opacity:0.7;box-shadow:0 0 0 5px rgba(29,166,160,0)}}
+.agent-head h3{font-size:12px;font-weight:700;color:var(--accent);flex:1;}
+.agent-status{font-size:9px;color:var(--teal);font-weight:600;background:rgba(29,166,160,0.12);padding:2px 6px;border-radius:7px;}
+.agent-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:7px;}
+.msg{border-left:2px solid var(--accent);background:rgba(255,255,255,0.04);border-radius:0 7px 7px 0;padding:8px 10px;font-size:11px;line-height:1.6;color:#C0D0E0;animation:msgIn 0.4s ease both;}
+@keyframes msgIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:translateX(0)}}
+.msg strong{color:var(--amber);}.msg .ok{color:var(--green);}.msg .warn{color:var(--amber);}.msg .err{color:var(--red);}.msg .nl{color:#B89EE8;}
+.msg.system{border-color:#B89EE8;background:rgba(124,92,191,0.08);}.msg.system strong{color:#B89EE8;}
+.msg-time{font-size:9px;color:var(--gray);margin-top:3px;}
+/* File attachment in chat */
+.msg-file{display:inline-flex;align-items:center;gap:5px;background:rgba(46,143,192,0.12);border:1px solid rgba(46,143,192,0.25);border-radius:6px;padding:3px 8px;font-size:9px;color:var(--accent);margin-top:4px;}
+.typing{display:none;align-items:center;gap:4px;padding:9px 13px;}
+.typing.visible{display:flex;}
+.typing span{width:5px;height:5px;background:var(--gray);border-radius:50%;animation:typingDot 1.2s infinite;}
+.typing span:nth-child(2){animation-delay:0.2s;}.typing span:nth-child(3){animation-delay:0.4s;}
+@keyframes typingDot{0%,60%,100%{transform:translateY(0);opacity:0.4}30%{transform:translateY(-4px);opacity:1}}
+.processing{display:none;align-items:center;gap:9px;padding:9px 13px;background:rgba(124,92,191,0.1);border-top:1px solid rgba(124,92,191,0.2);font-size:10px;color:#B89EE8;font-weight:600;}
+.processing.visible{display:flex;}
+.proc-spinner{width:12px;height:12px;border:2px solid rgba(124,92,191,0.3);border-top-color:#B89EE8;border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.agent-input-area{flex-shrink:0;border-top:1px solid rgba(255,255,255,0.07);}
+.input-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#7C5CBF;padding:9px 13px 4px;}
+.quick-chips{display:flex;flex-direction:column;gap:3px;padding:0 9px 7px;}
+.qchip{padding:6px 10px;border-radius:6px;font-size:10.5px;font-weight:500;cursor:pointer;transition:all 0.2s;text-align:left;border:none;font-family:'DM Sans',sans-serif;}
+.qchip.nl{background:rgba(124,92,191,0.1);border:1px solid rgba(124,92,191,0.25);color:#B89EE8;}
+.qchip.nl:hover{background:rgba(124,92,191,0.22);border-color:#7C5CBF;}
+.qchip.bl{background:rgba(46,143,192,0.1);border:1px solid rgba(46,143,192,0.25);color:var(--accent);}
+.qchip.bl:hover{background:rgba(46,143,192,0.2);}
+/* Attached files preview */
+.attached-files{display:none;flex-wrap:wrap;gap:4px;padding:5px 9px 0;}
+.attached-files.has-files{display:flex;}
+.att-chip{display:flex;align-items:center;gap:4px;background:rgba(46,143,192,0.12);border:1px solid rgba(46,143,192,0.3);border-radius:5px;padding:3px 7px;font-size:9px;color:var(--accent);}
+.att-chip button{background:none;border:none;color:var(--gray);cursor:pointer;font-size:11px;line-height:1;padding:0;margin-left:2px;}
+.att-chip button:hover{color:var(--red);}
+.free-input-row{display:flex;gap:5px;padding:5px 9px 11px;}
+.free-input{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:7px 10px;font-size:11px;color:var(--white);font-family:'DM Mono',monospace;outline:none;transition:border 0.2s;}
+.free-input::placeholder{color:var(--gray);}
+.free-input:focus{border-color:rgba(124,92,191,0.5);background:rgba(124,92,191,0.07);}
+/* Clip button */
+.clip-btn{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:7px 10px;cursor:pointer;transition:all 0.2s;flex-shrink:0;color:var(--gray);display:flex;align-items:center;justify-content:center;}
+.clip-btn:hover{background:rgba(46,143,192,0.15);border-color:rgba(46,143,192,0.4);color:var(--accent);}
+.send-btn{background:var(--purple);border:none;border-radius:7px;padding:7px 11px;cursor:pointer;font-size:13px;transition:all 0.2s;flex-shrink:0;color:#fff;}
+.send-btn:hover{background:#9070D4;}
+
+/* MODALS */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.open{display:flex;animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:#0F2A45;border:1px solid rgba(46,143,192,0.3);border-radius:14px;width:500px;max-width:92vw;overflow:hidden;animation:modalIn 0.3s ease;}
+.modal.wide{width:580px;}
+@keyframes modalIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{padding:15px 18px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;}
+.modal-head h3{font-size:14px;font-weight:700;}
+.modal-close{background:none;border:none;color:var(--gray);font-size:20px;cursor:pointer;padding:0 3px;}
+.modal-close:hover{color:var(--white);}
+.modal-body{padding:16px 18px;}
+.modal-foot{padding:12px 18px;border-top:1px solid rgba(255,255,255,0.07);display:flex;justify-content:flex-end;gap:7px;}
+.modal-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray);margin-bottom:7px;}
+.modal-textarea{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:9px;padding:10px 12px;font-size:12px;color:var(--white);font-family:'DM Mono',monospace;resize:none;outline:none;line-height:1.7;transition:border 0.2s;}
+.modal-textarea:focus{border-color:rgba(124,92,191,0.5);background:rgba(124,92,191,0.06);}
+.modal-hint{font-size:10px;color:var(--gray);margin-top:5px;line-height:1.5;}
+.modal-input{width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;transition:border 0.2s;margin-bottom:10px;}
+.modal-input:focus{border-color:rgba(46,143,192,0.5);}
+.modal-select{width:100%;background:#0C1F35;border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:8px 11px;font-size:12px;color:var(--white);font-family:'DM Sans',sans-serif;outline:none;margin-bottom:10px;cursor:pointer;}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.modal-btn-sec{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:var(--white);border-radius:7px;padding:8px 15px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.modal-btn-sec:hover{background:rgba(255,255,255,0.12);}
+.modal-btn-pri{background:linear-gradient(135deg,#7C5CBF,#5A3F9E);border:none;color:#fff;border-radius:7px;padding:8px 16px;font-size:12px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;display:flex;align-items:center;gap:6px;}
+.modal-btn-pri:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.modal-btn-pri:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+.modal-btn-danger{background:rgba(217,79,79,0.2);border:1px solid rgba(217,79,79,0.4);color:var(--red);border-radius:7px;padding:8px 15px;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all 0.2s;}
+.modal-btn-danger:hover{background:rgba(217,79,79,0.35);}
+
+/* Task detail modal */
+.task-modal{width:520px;}
+.task-status-bar{display:flex;gap:6px;margin-bottom:14px;}
+.tstatus{padding:6px 12px;border-radius:7px;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.15s;border:1px solid transparent;}
+.tstatus.active-g{background:rgba(42,155,111,0.2);border-color:var(--green);color:var(--green);}
+.tstatus.active-a{background:rgba(224,155,61,0.2);border-color:var(--amber);color:var(--amber);}
+.tstatus.active-r{background:rgba(217,79,79,0.2);border-color:var(--red);color:var(--red);}
+.tstatus.inactive{background:rgba(255,255,255,0.04);color:var(--gray);}
+.tstatus:hover{filter:brightness(1.2);}
+.task-field{margin-bottom:12px;}
+.task-field label{display:block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gray);margin-bottom:5px;}
+.task-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.task-meta-item{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 11px;}
+.task-meta-item .tmi-label{font-size:9px;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px;}
+.task-meta-item .tmi-val{font-size:12px;font-weight:600;}
+.tmi-val.ok{color:var(--green);}.tmi-val.warn{color:var(--amber);}.tmi-val.late{color:var(--red);}
+.priority-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px;}
+
+/* Member modal */
+.member-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px;}
+.member-opt{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:9px;border:1px solid rgba(255,255,255,0.09);background:rgba(255,255,255,0.04);cursor:pointer;transition:all 0.2s;}
+.member-opt:hover{border-color:var(--accent);background:rgba(46,143,192,0.08);}
+.member-opt.added{border-color:var(--green);background:rgba(42,155,111,0.1);pointer-events:none;}
+.member-opt .av-sm{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff;flex-shrink:0;}
+.member-opt-name{font-size:11px;font-weight:600;}.member-opt-role{font-size:9px;color:var(--gray);}
+.member-check{margin-left:auto;color:var(--green);font-size:13px;display:none;}
+.member-opt.added .member-check{display:block;}
+
+/* Profile modal */
+.profile-modal{width:360px;}
+.profile-header{padding:20px 18px 14px;background:linear-gradient(135deg,rgba(26,79,122,0.8),rgba(46,143,192,0.2));display:flex;align-items:center;gap:13px;}
+.profile-av{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;border:3px solid rgba(255,255,255,0.2);}
+.profile-name{font-size:15px;font-weight:700;}.profile-role{font-size:10px;color:rgba(255,255,255,0.7);margin-top:2px;}
+.profile-body{padding:14px 18px;}
+.profile-stat{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid rgba(255,255,255,0.06);}
+.profile-stat:last-child{border-bottom:none;}
+.profile-stat-label{font-size:11px;color:var(--gray);}.profile-stat-val{font-size:11px;font-weight:600;}
+.profile-stat-val.ok{color:var(--green);}.profile-stat-val.warn{color:var(--amber);}.profile-stat-val.err{color:var(--red);}
+.profile-task{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:7px 10px;margin-bottom:5px;font-size:11px;}
+.profile-task .pt-name{font-weight:600;margin-bottom:2px;}.profile-task .pt-meta{font-size:10px;color:var(--gray);}
+
+/* Toast */
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:#1A4F7A;border:1px solid rgba(46,143,192,0.4);border-radius:10px;padding:9px 18px;font-size:12px;font-weight:600;color:var(--white);opacity:0;transition:all 0.3s;z-index:999;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+/* Hidden file input */
+#fileInputHidden{display:none;}
+
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:4px;}
+</style>
+</head>
+<body>
+
+<nav>
+  <div>
+    <div class="logo">Proyecto<span>.</span>Vivo</div>
+    <div class="logo-sub">Tu agente IA de proyectos</div>
+  </div>
+  <div class="nav-right">
+    <a href="https://wa.me/525587662865?text=Hola%2C%20vi%20el%20demo%20de%20Proyecto%20Vivo%20y%20me%20interesa%20saber%20m%C3%A1s." target="_blank" class="wa-nav">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.558 4.121 1.532 5.854L.057 23.882l6.186-1.452A11.944 11.944 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.808 9.808 0 01-5.003-1.37l-.36-.214-3.722.873.937-3.62-.234-.373A9.798 9.798 0 012.182 12C2.182 6.57 6.57 2.182 12 2.182S21.818 6.57 21.818 12 17.43 21.818 12 21.818z"/></svg>
+      Hablar con el equipo
+    </a>
+    <div class="demo-badge">🎬 Modo demo</div>
+  </div>
+</nav>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-section">Proyectos activos</div>
+    <div class="proj-item active" onclick="selectProject('pedregal',this)"><div class="proj-dot warn"></div><div><div class="proj-name">Casa Pedregal</div><div class="proj-type">Proyecto ejecutivo</div></div></div>
+    <div class="proj-item" onclick="selectProject('polanco',this)"><div class="proj-dot ok"></div><div><div class="proj-name">Oficinas Polanco</div><div class="proj-type">Anteproyecto</div></div></div>
+    <div class="proj-item" onclick="selectProject('coyoacan',this)"><div class="proj-dot danger"></div><div><div class="proj-name">Remodelación Coyoacán</div><div class="proj-type">Entrega final</div></div></div>
+    <div class="sidebar-div"></div>
+    <div class="sidebar-section">Acciones rápidas</div>
+    <button class="sidebar-action" onclick="openMinutaModal()"><span>📋</span> Procesar minuta</button>
+    <button class="sidebar-action" onclick="showToast('Subida de planos en versión completa')"><span>📐</span> Subir planos</button>
+    <button class="sidebar-action" onclick="generateDoc()"><span>📄</span> Generar memoria</button>
+    <button class="sidebar-action" onclick="showToast('Reporte generado y listo para compartir')"><span>📊</span> Reporte de avance</button>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div><h1 id="projTitle">Casa Pedregal</h1><div class="sub" id="projSub">Proyecto ejecutivo · Actualizado hace 2 min</div></div>
+      <div class="topbar-actions">
+        <div class="team-row" id="teamRow"></div>
+        <button class="btn-sec" onclick="showToast('Compartiendo estado con el cliente...')">Compartir</button>
+        <button class="btn-pri" onclick="openMinutaModal()">+ Minuta</button>
+      </div>
+    </div>
+
+    <div class="kpis">
+      <div class="kpi g"><div class="kl">Próxima exhibición</div><div class="kv" id="k1v">$45K</div><div class="ks" id="k1s">2ª exhibición · 3 pendientes</div><div class="kp" id="k1p">⏳ 3 pendientes</div></div>
+      <div class="kpi a"><div class="kl">En riesgo esta semana</div><div class="kv" id="k2v">2</div><div class="ks">entregables sin avance</div><div class="kp">⚠️ Requieren acción hoy</div></div>
+      <div class="kpi b"><div class="kl">Avance del proyecto</div><div class="kv" id="k3v">65%</div><div class="ks" id="k3s">12 de 18 entregables</div><div class="kp" id="k3p">📐 Proyecto ejecutivo</div></div>
+      <div class="kpi" style="background:rgba(124,92,191,0.08);border-color:rgba(124,92,191,0.2);border-radius:11px;padding:12px 14px;cursor:pointer;">
+        <div class="kl">Pendientes del agente</div>
+        <div class="kv" id="k4v" style="color:#B89EE8;font-family:'Playfair Display',serif;font-size:22px;font-weight:800;line-height:1;">4</div>
+        <div class="ks" id="k4s">desde la última minuta</div>
+        <div class="kp" style="background:rgba(124,92,191,0.2);color:#B89EE8;">✦ Agente activo</div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="panel">
+      <div class="panel-head"><h3>Proyectos del despacho</h3><span onclick="showToast('Vista completa en versión definitiva')">Ver todos →</span></div>
+      <div class="proj-row selected" onclick="selectProject('pedregal',null)"><div><div class="prn">Casa Pedregal</div><div class="prm">Proyecto ejecutivo · Jorge Villanueva, Sofía Méndez, Ext. Estructural</div></div><div><div class="prog-top">65%</div><div class="prog-bar"><div class="prog-fill a" style="width:65%"></div></div></div><div class="sbadge warn">⚠️ En riesgo</div></div>
+      <div class="proj-row" onclick="selectProject('polanco',null)"><div><div class="prn">Oficinas Polanco</div><div class="prm">Anteproyecto · María Torres, Carlos Ibáñez</div></div><div><div class="prog-top">40%</div><div class="prog-bar"><div class="prog-fill g" style="width:40%"></div></div></div><div class="sbadge ok">✓ Al corriente</div></div>
+      <div class="proj-row" onclick="selectProject('coyoacan',null)"><div><div class="prn">Remodelación Coyoacán</div><div class="prm">Entrega final · Arq. Ramírez</div></div><div><div class="prog-top">90%</div><div class="prog-bar"><div class="prog-fill r" style="width:90%"></div></div></div><div class="sbadge danger">🔴 Cobro vencido</div></div>
+    </div>
+
+    <!-- GANTT -->
+    <div class="panel">
+      <div class="panel-head">
+        <h3 id="ganttTitle">Casa Pedregal · Cronograma</h3>
+        <div class="ph-right"><span id="ganttRange" style="color:var(--gray);font-size:10px;">Mar — Abr 2026</span></div>
+      </div>
+      <div class="gantt-scroll"><div id="ganttContainer"></div></div>
+    </div>
+
+    <!-- KANBAN DELIVERABLES -->
+    <div class="panel">
+      <div class="panel-head">
+        <h3 id="delTitle">Casa Pedregal · Pendientes</h3>
+        <div class="ph-right">
+          <span id="delCount" style="color:var(--gray);">12 de 18 · ✦ 4 del agente</span>
+          <button class="ph-btn green" onclick="openNewTaskModal()">+ Nueva tarea</button>
+        </div>
+      </div>
+      <div class="kanban">
+        <div class="kanban-col kcol-g">
+          <div class="kanban-col-head"><span class="kcol-title">✓ Completadas <span class="kcol-count" id="cnt-g">0</span></span><button class="kcol-add" onclick="openNewTaskModal('ok')" title="Agregar">+</button></div>
+          <div class="kanban-items" id="col-ok"></div>
+        </div>
+        <div class="kanban-col kcol-a">
+          <div class="kanban-col-head"><span class="kcol-title">⏳ En proceso <span class="kcol-count" id="cnt-a">0</span></span><button class="kcol-add" onclick="openNewTaskModal('warn')" title="Agregar">+</button></div>
+          <div class="kanban-items" id="col-warn"></div>
+        </div>
+        <div class="kanban-col kcol-r">
+          <div class="kanban-col-head"><span class="kcol-title">🔴 En riesgo <span class="kcol-count" id="cnt-r">0</span></span><button class="kcol-add" onclick="openNewTaskModal('danger')" title="Agregar">+</button></div>
+          <div class="kanban-items" id="col-danger"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENT PANEL -->
+  <div class="agent-panel">
+    <div class="agent-head"><div class="agent-dot"></div><h3>Agente IA · Proyecto Vivo</h3><div class="agent-status">En línea</div></div>
+    <div class="agent-msgs" id="agentMsgs"></div>
+    <div class="typing" id="typingIndicator"><span></span><span></span><span></span></div>
+    <div class="processing" id="processingBar"><div class="proc-spinner"></div><span id="processingText">Procesando...</span></div>
+    <div class="agent-input-area">
+      <div class="input-label">✦ Escribe o elige una acción</div>
+      <div class="quick-chips">
+        <button class="qchip nl" onclick="askAgent('riesgos')">¿Qué riesgos tiene esta semana?</button>
+        <button class="qchip nl" onclick="askAgent('cobro')">¿Qué falta para cobrar?</button>
+        <button class="qchip nl" onclick="askAgent('tiempo')">¿Estamos en tiempo?</button>
+        <button class="qchip bl" onclick="generateDoc()">Generar memoria descriptiva</button>
+      </div>
+      <div class="attached-files" id="attachedFiles"></div>
+      <div class="free-input-row">
+        <button class="clip-btn" onclick="triggerFileAttach()" title="Adjuntar archivo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="15" height="15"><path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48"/></svg>
+        </button>
+        <input class="free-input" id="freeInput" placeholder='"El cliente aprobó cambiar fachada..."' onkeydown="if(event.key==='Enter')sendFree()"/>
+        <button class="send-btn" onclick="sendFree()">↑</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MINUTA MODAL -->
+<div class="modal-overlay" id="minutaModal" onclick="if(event.target===this)closeMinutaModal()">
+  <div class="modal">
+    <div class="modal-head"><h3>📋 Procesar minuta de reunión</h3><button class="modal-close" onclick="closeMinutaModal()">×</button></div>
+    <div class="modal-body">
+      <div class="modal-label">Escribe o pega la minuta</div>
+      <textarea class="modal-textarea" id="minutaText" rows="6" placeholder="Ej: Reunión 9 mar. Cliente aprobó ampliar cocina a 14m². Pide agregar medio baño en PB. Dirección confirmó 2ª exhibición condicionada a entrega estructural antes del 18 mar..."></textarea>
+      <div class="modal-hint">💡 Escribe tal como tomarías notas. No necesitas formato especial.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn-sec" onclick="closeMinutaModal()">Cancelar</button>
+      <button class="modal-btn-pri" id="processBtn" onclick="processMinuta()"><span>✦</span> Procesar con el agente</button>
+    </div>
+  </div>
+</div>
+
+<!-- NEW/EDIT TASK MODAL -->
+<div class="modal-overlay" id="taskModal" onclick="if(event.target===this)closeTaskModal()">
+  <div class="modal wide">
+    <div class="modal-head"><h3 id="taskModalTitle">Nueva tarea</h3><button class="modal-close" onclick="closeTaskModal()">×</button></div>
+    <div class="modal-body">
+      <div class="task-field">
+        <label>Nombre de la tarea</label>
+        <input class="modal-input" id="tf-name" placeholder="Ej: Planta arquitectónica nivel 2"/>
+      </div>
+      <div class="task-field">
+        <label>Estado</label>
+        <div class="task-status-bar" id="taskStatusBar">
+          <button class="tstatus inactive" data-s="ok" onclick="selectTaskStatus('ok',this)">✓ Completada</button>
+          <button class="tstatus active-a" data-s="warn" onclick="selectTaskStatus('warn',this)">⏳ En proceso</button>
+          <button class="tstatus inactive" data-s="danger" onclick="selectTaskStatus('danger',this)">🔴 En riesgo</button>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="task-field">
+          <label>Responsable</label>
+          <select class="modal-select" id="tf-owner">
+            <option value="jorge">Jorge Villanueva</option>
+            <option value="sofia">Sofía Méndez</option>
+            <option value="carlos">Carlos Ibáñez</option>
+            <option value="maria">María Torres</option>
+            <option value="ramirez">Arq. Luis Ramírez</option>
+            <option value="ext">Ext. Estructural</option>
+          </select>
+        </div>
+        <div class="task-field">
+          <label>Prioridad</label>
+          <select class="modal-select" id="tf-priority">
+            <option value="alta">🔴 Alta</option>
+            <option value="media" selected>🟡 Media</option>
+            <option value="baja">🟢 Baja</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-row">
+        <div class="task-field">
+          <label>Fecha de inicio</label>
+          <input class="modal-input" id="tf-start" type="date" style="margin-bottom:0;"/>
+        </div>
+        <div class="task-field">
+          <label>Fecha de vencimiento</label>
+          <input class="modal-input" id="tf-end" type="date" style="margin-bottom:0;"/>
+        </div>
+      </div>
+      <div class="task-field" style="margin-top:10px;">
+        <label>Notas</label>
+        <textarea class="modal-textarea" id="tf-notes" rows="2" placeholder="Contexto adicional, dependencias, links..."></textarea>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn-danger" id="deleteTaskBtn" onclick="deleteCurrentTask()" style="display:none;">Eliminar</button>
+      <button class="modal-btn-sec" onclick="closeTaskModal()">Cancelar</button>
+      <button class="modal-btn-pri" onclick="saveTask()"><span>✓</span> Guardar tarea</button>
+    </div>
+  </div>
+</div>
+
+<!-- ADD MEMBER MODAL -->
+<div class="modal-overlay" id="addMemberModal" onclick="if(event.target===this)closeAddMember()">
+  <div class="modal">
+    <div class="modal-head"><h3>👥 Agregar persona al proyecto</h3><button class="modal-close" onclick="closeAddMember()">×</button></div>
+    <div class="modal-body"><div class="modal-label">Miembros del despacho</div><div class="member-grid" id="memberGrid"></div></div>
+    <div class="modal-foot"><button class="modal-btn-sec" onclick="closeAddMember()">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="modal-overlay" id="profileModal" onclick="if(event.target===this)closeProfile()">
+  <div class="modal profile-modal">
+    <div class="modal-head" style="padding:11px 15px;"><h3>Perfil del colaborador</h3><button class="modal-close" onclick="closeProfile()">×</button></div>
+    <div id="profileContent"></div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+<!-- Hidden file input -->
+<input type="file" id="fileInputHidden" multiple accept=".pdf,.dwg,.xlsx,.docx,.jpg,.png" onchange="handleFileAttach(this)"/>
+
+<script>
+/* ════ MEMBERS ════ */
+const allMembers = {
+  jorge:   {id:'jorge',  name:'Jorge Villanueva', initials:'JV',color:'#2E8FC0',role:'Arquitecto Senior',       tasks:4,done:3,active:['Planta arquitectónica PB','Ampliación cocina']},
+  sofia:   {id:'sofia',  name:'Sofía Méndez',     initials:'SM',color:'#2A9B6F',role:'Arquitecta',              tasks:3,done:1,active:['Plano hidráulico','Medio baño PB']},
+  carlos:  {id:'carlos', name:'Carlos Ibáñez',    initials:'CI',color:'#7C5CBF',role:'Diseñador / Visualización',tasks:2,done:1,active:['Planos eléctricos']},
+  maria:   {id:'maria',  name:'María Torres',     initials:'MT',color:'#E09B3D',role:'Arquitecta Jr.',          tasks:2,done:2,active:['Planta de conjunto','Programa arq.']},
+  ramirez: {id:'ramirez',name:'Arq. Luis Ramírez',initials:'LR',color:'#1DA6A0',role:'Director del despacho',   tasks:2,done:1,active:['Bitácora de obra','Acta de entrega']},
+  ext:     {id:'ext',    name:'Ext. Estructural', initials:'ES',color:'#D94F4F',role:'Corresponsable Externo',  tasks:1,done:0,active:['Memoria de cálculo estructural']},
+};
+
+/* ════ PROJECT DATA ════ */
+const projects = {
+  pedregal:{
+    title:'Casa Pedregal',sub:'Proyecto ejecutivo · Actualizado hace 2 min',
+    kpis:{k1v:'$45K',k1s:'2ª exhibición · 3 pendientes',k1p:'⏳ 3 pendientes',k2v:'2',k3v:'65%',k3s:'12 de 18 entregables',k3p:'📐 Proyecto ejecutivo',k4v:'4',k4s:'desde la última minuta'},
+    members:['jorge','sofia','ext'],
+    ganttTitle:'Casa Pedregal · Cronograma', ganttRange:'Mar — Abr 2026',
+    deadline:{pct:76, label:'Entrega 25 mar'},
+    gantt:[
+      {label:'Planta arq. PB',     owner:'J. Villanueva',start:0, dur:8, status:'ok'},
+      {label:'Plano hidráulico',   owner:'S. Méndez',    start:5, dur:14,status:'prog'},
+      {label:'Ampliación cocina',  owner:'J. Villanueva',start:9, dur:7, status:'warn'},
+      {label:'Medio baño PB',      owner:'S. Méndez',    start:9, dur:10,status:'warn'},
+      {label:'Cálculo estructural',owner:'Ext. Estr.',   start:3, dur:15,status:'danger'},
+      {label:'Especificaciones',   owner:'Agente IA',    start:0, dur:7, status:'ok'},
+      {label:'Planos eléctricos',  owner:'C. Ibáñez',    start:12,dur:12,status:'prog'},
+    ],
+    delTitle:'Casa Pedregal · Pendientes',delCount:'12 de 18 · ✦ 4 del agente',
+    deliverables:[
+      {id:'d1',status:'ok',    name:'Planta arquitectónica PB',      meta:'v3',     owner:'jorge',  dueDate:'2026-03-09',startDate:'2026-02-20',priority:'media',notes:'Aprobada por cliente en reunión del 9 mar.'},
+      {id:'d2',status:'warn',  name:'Plano hidráulico y sanitario',  meta:'v1',     owner:'sofia',  dueDate:'2026-03-14',startDate:'2026-03-05',priority:'alta', notes:'En proceso. Coordinar con especialista.'},
+      {id:'d3',status:'warn',  name:'Ampliación cocina a 14m²',      meta:'minuta', owner:'jorge',  dueDate:'2026-03-16',startDate:'2026-03-09',priority:'alta', notes:'Cambio solicitado por cliente en reunión 9 mar.'},
+      {id:'d4',status:'warn',  name:'Medio baño en PB',              meta:'minuta', owner:'sofia',  dueDate:'2026-03-19',startDate:'2026-03-09',priority:'media',notes:'Decisión cliente. Requiere ajustar plano de instalaciones.'},
+      {id:'d5',status:'danger',name:'Memoria de cálculo estructural',meta:'',       owner:'ext',    dueDate:'2026-03-18',startDate:'2026-03-03',priority:'alta', notes:'6 días sin avance. Riesgo crítico de cobro.'},
+      {id:'d6',status:'ok',    name:'Especificaciones técnicas',     meta:'agente', owner:'jorge',  dueDate:'2026-03-07',startDate:'2026-03-01',priority:'baja', notes:'Generado por el agente v2. Aprobado.'},
+      {id:'d7',status:'warn',  name:'Planos eléctricos',             meta:'',       owner:'carlos', dueDate:'2026-03-21',startDate:'2026-03-12',priority:'media',notes:'Pendiente de inicio.'},
+    ],
+    agentMsgs:[
+      {text:'<strong>Minuta 9 mar procesada:</strong> Encontré <span class="nl">2 cambios de alcance</span> y <span class="nl">1 fecha comprometida</span>. Agregué 4 pendientes.',time:'Hace 2 min'},
+      {text:'<strong>Riesgo de cobro:</strong> La 2ª exhibición de <span class="warn">$45,000</span> depende de la memoria estructural. El externo lleva <span class="err">6 días sin avance</span>.',time:'Hace 2 min'},
+      {text:'<strong>Fecha límite:</strong> Planos estructurales deben estar antes del 18 mar. <span class="err">Hoy es el último día</span> para confirmar con el externo.',time:'Hace 3 min'},
+    ]
+  },
+  polanco:{
+    title:'Oficinas Polanco',sub:'Anteproyecto · Al corriente',
+    kpis:{k1v:'$28K',k1s:'1ª exhibición · 1 pendiente',k1p:'⏳ 1 pendiente',k2v:'0',k3v:'40%',k3s:'6 de 15 entregables',k3p:'🏢 Anteproyecto',k4v:'1',k4s:'desde instrucción del socio'},
+    members:['maria','carlos'],
+    ganttTitle:'Oficinas Polanco · Cronograma',ganttRange:'Mar — Abr 2026',
+    deadline:{pct:90,label:'Entrega 10 abr'},
+    gantt:[
+      {label:'Planta de conjunto',owner:'M. Torres', start:0, dur:5, status:'ok'},
+      {label:'Programa arq.',     owner:'C. Ibáñez', start:0, dur:3, status:'ok'},
+      {label:'Planta arq. N1',    owner:'M. Torres', start:5, dur:15,status:'prog'},
+      {label:'Planta arq. N2',    owner:'M. Torres', start:15,dur:10,status:'warn'},
+      {label:'Render fachada',    owner:'C. Ibáñez', start:18,dur:10,status:'warn'},
+    ],
+    delTitle:'Oficinas Polanco · Pendientes',delCount:'6 de 15 · Al corriente',
+    deliverables:[
+      {id:'p1',status:'ok',  name:'Planta de conjunto',      meta:'v2',owner:'maria', dueDate:'2026-03-05',startDate:'2026-02-28',priority:'media',notes:'Aprobada.'},
+      {id:'p2',status:'ok',  name:'Programa arquitectónico', meta:'v1',owner:'carlos',dueDate:'2026-03-03',startDate:'2026-02-28',priority:'baja', notes:'Entregado y revisado.'},
+      {id:'p3',status:'warn',name:'Planta arquitectónica N1',meta:'v1',owner:'maria', dueDate:'2026-03-20',startDate:'2026-03-05',priority:'alta', notes:'En proceso. Fecha crítica para liberar cobro.'},
+      {id:'p4',status:'warn',name:'Planta arquitectónica N2',meta:'v1',owner:'maria', dueDate:'2026-03-25',startDate:'2026-03-20',priority:'media',notes:'Depende de N1.'},
+      {id:'p5',status:'warn',name:'Render de fachada',       meta:'',  owner:'carlos',dueDate:'2026-03-28',startDate:'2026-03-18',priority:'media',notes:'Solicitado por cliente.'},
+    ],
+    agentMsgs:[
+      {text:'<strong>Oficinas Polanco:</strong> Al <span class="ok">40%</span> y sin alertas activas.',time:'Hace 15 min'},
+      {text:'<strong>Próxima acción:</strong> Planta N1 vence el 20 mar. María la tiene en proceso.',time:'Hace 15 min'},
+    ]
+  },
+  coyoacan:{
+    title:'Remodelación Coyoacán',sub:'Entrega final · Cobro vencido 18 días',
+    kpis:{k1v:'$36K',k1s:'Cobro final vencido 18 días',k1p:'🔴 Urgente',k2v:'1',k3v:'90%',k3s:'16 de 18 entregables',k3p:'🏠 Remodelación',k4v:'2',k4s:'bloquean el cobro'},
+    members:['ramirez'],
+    ganttTitle:'Remodelación Coyoacán · Cronograma',ganttRange:'Feb — Mar 2026',
+    deadline:{pct:85,label:'Entrega 20 feb'},
+    gantt:[
+      {label:'Planos finales',     owner:'L. Ramírez',start:0, dur:18,status:'ok'},
+      {label:'Memoria descriptiva',owner:'Agente IA', start:5, dur:10,status:'ok'},
+      {label:'Especificaciones',   owner:'Agente IA', start:8, dur:8, status:'ok'},
+      {label:'Bitácora de obra',   owner:'L. Ramírez',start:20,dur:10,status:'danger'},
+      {label:'Acta de entrega',    owner:'L. Ramírez',start:25,dur:5, status:'danger'},
+    ],
+    delTitle:'Remodelación Coyoacán · Pendientes',delCount:'16 de 18 · 🔴 Cobro vencido',
+    deliverables:[
+      {id:'c1',status:'ok',    name:'Planos arquitectónicos finales',meta:'v4',     owner:'ramirez',dueDate:'2026-02-20',startDate:'2026-01-10',priority:'alta', notes:'Aprobados por el cliente.'},
+      {id:'c2',status:'ok',    name:'Memoria descriptiva',           meta:'agente', owner:'ramirez',dueDate:'2026-02-22',startDate:'2026-02-15',priority:'media',notes:'Generado por el agente v3.'},
+      {id:'c3',status:'ok',    name:'Especificaciones técnicas',     meta:'v2',     owner:'ramirez',dueDate:'2026-02-25',startDate:'2026-02-18',priority:'baja', notes:'Aprobado.'},
+      {id:'c4',status:'danger',name:'Bitácora de obra firmada',      meta:'',       owner:'ramirez',dueDate:'2026-02-20',startDate:'2026-02-15',priority:'alta', notes:'Pendiente firma del cliente. Bloquea cobro de $36K.'},
+      {id:'c5',status:'danger',name:'Acta de entrega final',         meta:'',       owner:'ramirez',dueDate:'2026-02-25',startDate:'2026-02-20',priority:'alta', notes:'Espera bitácora firmada.'},
+    ],
+    agentMsgs:[
+      {text:'<strong>🔴 Cobro bloqueado:</strong> $36K lleva <span class="err">18 días vencido</span>. Faltan: bitácora firmada y acta de entrega.',time:'Hace 1 hora'},
+      {text:'<strong>Acción recomendada:</strong> Genera el reporte al <span class="ok">90%</span> y envíalo al cliente hoy con solicitud de firma.',time:'Hace 1 hora'},
+    ]
+  }
+};
+
+const agentResponses = {
+  riesgos:{
+    pedregal:'<strong>Riesgos activos:</strong><br>🔴 Cálculo estructural sin avance (6 días) — bloquea cobro.<br>⚠️ Si no hay confirmación hoy, 2ª exhibición se mueve al 1 de abril.',
+    polanco:'<strong>Polanco:</strong> Sin riesgos activos. Planta N1 vence el 20 mar y está en proceso.',
+    coyoacan:'<strong>🔴 Riesgo crítico:</strong> Cobro de $36K vencido 18 días. Bitácora sin firma.'
+  },
+  cobro:{
+    pedregal:'<strong>Para cobrar la 2ª exhibición:</strong><br>1. Memoria estructural (Ext. Estructural)<br>2. Confirmación ampliación cocina (Jorge)<br>3. Aprobación del cliente<br>Cuello de botella: el externo estructural.',
+    polanco:'<strong>1ª exhibición:</strong> Solo falta la planta N1. Al entregarla se libera el cobro de $28K.',
+    coyoacan:'<strong>Para cobrar en Coyoacán:</strong> Firma del cliente en bitácora. Con eso se libera el acta y el cobro de $36K.'
+  },
+  tiempo:{
+    pedregal:'<strong>¿Llegas al 30 de abril?</strong> Sí, con margen ajustado. Riesgo: memoria estructural. <span class="warn">Agenda llamada con el externo hoy.</span>',
+    polanco:'<strong>¿Llegas al 30 de abril?</strong> <span class="ok">Sí, con margen</span>. El ritmo de entregas es consistente.',
+    coyoacan:'<strong>Coyoacán:</strong> Deberías haber entregado. El bloqueo es solo administrativo — firma.'
+  }
+};
+
+let currentProject = 'pedregal';
+let editingTaskId = null;
+let currentTaskStatus = 'warn';
+let attachedFiles = [];
+
+/* ════ SELECT PROJECT ════ */
+function selectProject(id, sidebarEl){
+  currentProject = id;
+  const p = projects[id];
+  if(sidebarEl){document.querySelectorAll('.proj-item').forEach(e=>e.classList.remove('active'));sidebarEl.classList.add('active');}
+  document.getElementById('projTitle').textContent=p.title;
+  document.getElementById('projSub').textContent=p.sub;
+  const k=p.kpis;
+  ['k1v','k1s','k1p','k2v','k3v','k3s','k3p','k4v','k4s'].forEach(id=>document.getElementById(id).textContent=k[id]);
+  document.getElementById('ganttTitle').textContent=p.ganttTitle;
+  document.getElementById('ganttRange').textContent=p.ganttRange;
+  document.getElementById('delTitle').textContent=p.delTitle;
+  document.getElementById('delCount').textContent=p.delCount;
+  renderTeam(p.members);
+  renderGantt(p.gantt, p.deadline);
+  renderKanban(p.deliverables);
+  const msgs=document.getElementById('agentMsgs');
+  msgs.innerHTML=p.agentMsgs.map(m=>`<div class="msg">${m.text}<div class="msg-time">${m.time}</div></div>`).join('');
+  document.querySelectorAll('.proj-row').forEach(r=>r.classList.remove('selected'));
+  const idx={pedregal:0,polanco:1,coyoacan:2}[id];
+  document.querySelectorAll('.proj-row')[idx]?.classList.add('selected');
+  setTimeout(()=>{document.querySelectorAll('.prog-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,80);});},50);
+}
+
+/* ════ TEAM AVATARS ════ */
+function renderTeam(memberIds){
+  const row=document.getElementById('teamRow');row.innerHTML='';
+  memberIds.forEach(id=>{
+    const m=allMembers[id];
+    const a=document.createElement('a');a.href='#';a.className='avatar';a.style.background=m.color;
+    a.onclick=e=>{e.preventDefault();openProfile(id);};
+    a.innerHTML=`${m.initials}<div class="avatar-tooltip"><div class="at-name">${m.name}</div><div class="at-role">${m.role}</div></div>`;
+    row.appendChild(a);
+  });
+  const add=document.createElement('div');add.className='avatar-add';add.innerHTML='+';add.onclick=openAddMember;row.appendChild(add);
+  const lbl=document.createElement('div');lbl.className='team-label';lbl.textContent=`${memberIds.length} persona${memberIds.length!==1?'s':''}`;row.appendChild(lbl);
+}
+
+/* ════ GANTT with scroll limit + deadline line ════ */
+function renderGantt(rows, deadline){
+  const totalDays=35, todayPct=9/totalDays*100;
+  const labels=['9 Mar','16 Mar','23 Mar','30 Mar','6 Abr'];
+  let html=`<div class="gantt-row header-row"><div class="gantt-label header">Entregable</div><div class="gantt-track" style="display:flex;">${labels.map(l=>`<div style="flex:1;font-size:8px;font-weight:700;text-transform:uppercase;color:var(--gray);text-align:center;padding:8px 0;">${l}</div>`).join('')}</div></div>`;
+  rows.forEach(r=>{
+    const left=(r.start/totalDays*100).toFixed(1), width=Math.max((r.dur/totalDays*100),3).toFixed(1);
+    html+=`<div class="gantt-row"><div class="gantt-label">${r.label}<small>${r.owner}</small></div>
+    <div class="gantt-track">
+      <div class="gantt-today-line" style="left:${todayPct}%"></div>
+      ${deadline?`<div class="gantt-deadline" data-label="${deadline.label}" style="left:${deadline.pct}%"></div>`:''}
+      <div class="gantt-bar ${r.status}" style="left:${left}%;width:${width}%;" title="${r.label}">${width>7?r.label:''}</div>
+    </div></div>`;
+  });
+  document.getElementById('ganttContainer').innerHTML=html;
+}
+
+/* ════ KANBAN RENDER ════ */
+function renderKanban(dels){
+  const ok=[],warn=[],danger=[];
+  dels.forEach(d=>{ if(d.status==='ok')ok.push(d); else if(d.status==='danger')danger.push(d); else warn.push(d); });
+  document.getElementById('col-ok').innerHTML=ok.map(d=>cardHTML(d,'ok')).join('');
+  document.getElementById('col-warn').innerHTML=warn.map(d=>cardHTML(d,'warn')).join('');
+  document.getElementById('col-danger').innerHTML=danger.map(d=>cardHTML(d,'danger')).join('');
+  document.getElementById('cnt-g').textContent=ok.length;
+  document.getElementById('cnt-a').textContent=warn.length;
+  document.getElementById('cnt-r').textContent=danger.length;
+}
+
+function cardHTML(d, colStatus){
+  const m=allMembers[d.owner];
+  const ownerLink=m?`<a href="#" class="kcard-owner" onclick="event.stopPropagation();event.preventDefault();openProfile('${d.owner}')">${m.name}</a>`:'—';
+  const isMinuta=d.meta==='minuta'?`<span class="nl-src">✦ minuta</span>`:'';
+  const isAgente=d.meta==='agente'?`<span class="nl-src">✦ agente</span>`:'';
+  const dateStr=d.dueDate?d.dueDate.slice(5).replace('-','/'):'-';
+  const pColors={alta:'#D94F4F',media:'#E09B3D',baja:'#2A9B6F'};
+  return `<div class="kcard" onclick="openTaskDetail('${d.id}')">
+    <div class="kcard-name">${d.name}${isMinuta}${isAgente}</div>
+    <div class="kcard-meta">
+      <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:${pColors[d.priority]||'#8A9BB0'};flex-shrink:0;"></span>
+      ${ownerLink}
+      <span class="kcard-date">${dateStr}</span>
+    </div>
+  </div>`;
+}
+
+/* ════ TASK DETAIL / CRUD ════ */
+function openTaskDetail(taskId){
+  const p=projects[currentProject];
+  const task=p.deliverables.find(d=>d.id===taskId);
+  if(!task)return;
+  editingTaskId=taskId;
+  currentTaskStatus=task.status;
+  document.getElementById('taskModalTitle').textContent='Detalle de tarea';
+  document.getElementById('tf-name').value=task.name.replace(/<[^>]+>/g,'');
+  document.getElementById('tf-owner').value=task.owner;
+  document.getElementById('tf-priority').value=task.priority||'media';
+  document.getElementById('tf-start').value=task.startDate||'';
+  document.getElementById('tf-end').value=task.dueDate||'';
+  document.getElementById('tf-notes').value=task.notes||'';
+  document.getElementById('deleteTaskBtn').style.display='block';
+  renderStatusBar(task.status);
+  document.getElementById('taskModal').classList.add('open');
+}
+
+function openNewTaskModal(defaultStatus){
+  editingTaskId=null;
+  currentTaskStatus=defaultStatus||'warn';
+  document.getElementById('taskModalTitle').textContent='Nueva tarea';
+  document.getElementById('tf-name').value='';
+  document.getElementById('tf-owner').value='jorge';
+  document.getElementById('tf-priority').value='media';
+  document.getElementById('tf-start').value='';
+  document.getElementById('tf-end').value='';
+  document.getElementById('tf-notes').value='';
+  document.getElementById('deleteTaskBtn').style.display='none';
+  renderStatusBar(currentTaskStatus);
+  document.getElementById('taskModal').classList.add('open');
+}
+
+function renderStatusBar(activeStatus){
+  const btns=document.querySelectorAll('#taskStatusBar .tstatus');
+  btns.forEach(b=>{
+    const s=b.dataset.s;
+    b.className='tstatus '+(s===activeStatus ? (s==='ok'?'active-g':s==='warn'?'active-a':'active-r') : 'inactive');
+  });
+}
+
+function selectTaskStatus(s,btn){
+  currentTaskStatus=s;
+  renderStatusBar(s);
+}
+
+function saveTask(){
+  const name=document.getElementById('tf-name').value.trim();
+  if(!name){showToast('Escribe el nombre de la tarea');return;}
+  const p=projects[currentProject];
+  if(editingTaskId){
+    const task=p.deliverables.find(d=>d.id===editingTaskId);
+    if(task){
+      task.name=name; task.status=currentTaskStatus; task.owner=document.getElementById('tf-owner').value;
+      task.priority=document.getElementById('tf-priority').value;
+      task.startDate=document.getElementById('tf-start').value;
+      task.dueDate=document.getElementById('tf-end').value;
+      task.notes=document.getElementById('tf-notes').value;
+    }
+    showToast('✓ Tarea actualizada');
+  } else {
+    const newTask={
+      id:'t'+Date.now(), status:currentTaskStatus, name, meta:'',
+      owner:document.getElementById('tf-owner').value,
+      priority:document.getElementById('tf-priority').value,
+      startDate:document.getElementById('tf-start').value,
+      dueDate:document.getElementById('tf-end').value,
+      notes:document.getElementById('tf-notes').value,
+    };
+    p.deliverables.push(newTask);
+    addAgentMsg(`<strong>✦ Tarea creada:</strong> "<span class="nl">${name}</span>" asignada a ${allMembers[newTask.owner]?.name||newTask.owner}.`,'Ahora mismo');
+    showToast('✓ Tarea agregada al proyecto');
+  }
+  renderKanban(p.deliverables);
+  closeTaskModal();
+}
+
+function deleteCurrentTask(){
+  if(!editingTaskId)return;
+  const p=projects[currentProject];
+  p.deliverables=p.deliverables.filter(d=>d.id!==editingTaskId);
+  renderKanban(p.deliverables);
+  closeTaskModal();
+  showToast('Tarea eliminada');
+}
+
+function closeTaskModal(){document.getElementById('taskModal').classList.remove('open');editingTaskId=null;}
+
+/* ════ AGENT ════ */
+function askAgent(type){
+  showTyping();
+  setTimeout(()=>{hideTyping();addAgentMsg(agentResponses[type]?.[currentProject]||'Procesando...','Ahora mismo');},1400);
+}
+
+function sendFree(){
+  const input=document.getElementById('freeInput'), text=input.value.trim();
+  if(!text&&attachedFiles.length===0)return;
+  let msgHtml=`<strong>Tú:</strong> ${text||'(archivo adjunto)'}`;
+  if(attachedFiles.length>0){
+    msgHtml+=`<div style="margin-top:4px;">${attachedFiles.map(f=>`<div class="msg-file">📎 ${f}</div>`).join('')}</div>`;
+    clearAttachments();
+  }
+  addAgentMsg(msgHtml,'Ahora mismo',true);
+  input.value=''; showTyping();
+  setTimeout(()=>{
+    hideTyping();
+    const lower=text.toLowerCase();
+    let resp;
+    if(lower.includes('fachada')||lower.includes('acabado')){
+      resp='<strong>✦ Cambio registrado:</strong> Cliente aprobó cambio en fachada. <span class="nl">Agregué 1 pendiente</span>: actualizar especificaciones de fachada.';
+      addNewKanbanTask('Actualización especificaciones de fachada','warn');
+    } else if(lower.includes('aprobó')||lower.includes('autorizó')){
+      resp='<strong>✦ Aprobación registrada:</strong> Marcando entregables relacionados.';
+    } else if(lower.includes('cobr')||lower.includes('exhibición')){
+      resp=agentResponses.cobro[currentProject];
+    } else {
+      resp=`<strong>Instrucción recibida:</strong> Registré en <span class="nl">${projects[currentProject].title}</span>. Si hay acuerdos específicos, dímelos.`;
+    }
+    addAgentMsg(resp,'Ahora mismo');
+  },1800);
+}
+
+function addNewKanbanTask(name, status){
+  const p=projects[currentProject];
+  const owner=p.members[0]||'jorge';
+  const newTask={id:'t'+Date.now(),status,name,meta:'minuta',owner,priority:'media',startDate:'',dueDate:'',notes:'Detectado en instrucción manual.'};
+  p.deliverables.push(newTask);
+  renderKanban(p.deliverables);
+  document.getElementById('k4v').textContent=parseInt(document.getElementById('k4v').textContent)+1;
+}
+
+function generateDoc(){
+  showProcessing('Leyendo planos y cuadro de áreas...');
+  setTimeout(()=>{showProcessing('Generando memoria descriptiva...');
+    setTimeout(()=>{hideProcessing();
+      addAgentMsg('<strong>📄 Memoria descriptiva generada:</strong> Lista para revisión. <span class="warn">2 secciones desactualizadas por cambios de minuta</span> — revísalas antes de firmar.','Ahora mismo');
+      showToast('✓ Memoria descriptiva lista para revisión');
+    },1800);
+  },1000);
+}
+
+/* ════ MINUTA ════ */
+function openMinutaModal(){document.getElementById('minutaModal').classList.add('open');}
+function closeMinutaModal(){document.getElementById('minutaModal').classList.remove('open');}
+
+function processMinuta(){
+  const text=document.getElementById('minutaText').value.trim();
+  if(!text){showToast('Escribe la minuta primero');return;}
+  const btn=document.getElementById('processBtn');
+  btn.disabled=true;btn.innerHTML='<div style="width:13px;height:13px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite"></div> Procesando...';
+  setTimeout(()=>{
+    closeMinutaModal();btn.disabled=false;btn.innerHTML='<span>✦</span> Procesar con el agente';
+    showProcessing('Analizando acuerdos...');
+    setTimeout(()=>{showProcessing('Identificando entregables afectados...');
+      setTimeout(()=>{showProcessing('Actualizando pendientes...');
+        setTimeout(()=>{
+          hideProcessing();
+          const hasCocina=text.toLowerCase().includes('cocina');
+          const hasBano=text.toLowerCase().includes('baño');
+          let newItems=0;
+          if(hasCocina){addNewKanbanTask('Actualización planos cocina','warn');newItems++;}
+          if(hasBano){addNewKanbanTask('Plano de baño adicional','warn');newItems++;}
+          if(!hasCocina&&!hasBano){addNewKanbanTask('Pendiente detectado en minuta','warn');newItems++;}
+          addAgentMsg(`<strong>✦ Minuta procesada:</strong> Encontré <span class="nl">${newItems+1} acuerdo(s)</span>. Agregué ${newItems+1} pendiente(s).`,'Ahora mismo');
+          showToast(`✓ ${newItems+1} pendiente(s) nuevos agregados`);
+          document.getElementById('minutaText').value='';
+        },900);
+      },900);
+    },900);
+  },1200);
+}
+
+/* ════ FILE ATTACH ════ */
+function triggerFileAttach(){document.getElementById('fileInputHidden').click();}
+function handleFileAttach(input){
+  Array.from(input.files).forEach(f=>attachedFiles.push(f.name));
+  renderAttached();
+  input.value='';
+  showToast(`📎 ${attachedFiles.length} archivo(s) adjunto(s) — presiona ↑ para enviar`);
+}
+function renderAttached(){
+  const container=document.getElementById('attachedFiles');
+  if(attachedFiles.length===0){container.classList.remove('has-files');return;}
+  container.classList.add('has-files');
+  container.innerHTML=attachedFiles.map((f,i)=>`<div class="att-chip">📎 ${f}<button onclick="removeAttach(${i})">×</button></div>`).join('');
+}
+function removeAttach(i){attachedFiles.splice(i,1);renderAttached();}
+function clearAttachments(){attachedFiles=[];renderAttached();}
+
+/* ════ PROFILES ════ */
+function openProfile(id){
+  const m=allMembers[id]; if(!m)return;
+  document.getElementById('profileContent').innerHTML=`
+    <div class="profile-header"><div class="profile-av" style="background:${m.color}">${m.initials}</div>
+    <div><div class="profile-name">${m.name}</div><div class="profile-role">${m.role}</div></div></div>
+    <div class="profile-body">
+      <div class="profile-stat"><span class="profile-stat-label">Tareas asignadas</span><span class="profile-stat-val">${m.tasks}</span></div>
+      <div class="profile-stat"><span class="profile-stat-label">Completadas</span><span class="profile-stat-val ok">${m.done} de ${m.tasks}</span></div>
+      <div class="profile-stat"><span class="profile-stat-label">Estado</span><span class="profile-stat-val ${m.done===m.tasks?'ok':m.done>0?'warn':'err'}">${m.done===m.tasks?'✓ Al corriente':m.done>0?'En proceso':'⚠ Sin avance'}</span></div>
+      <div class="profile-tasks" style="margin-top:12px;"><div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.7px;color:var(--gray);margin-bottom:7px;">Entregables activos</div>
+      ${m.active.map(t=>`<div class="profile-task"><div class="pt-name">${t}</div><div class="pt-meta">En curso · ${projects[currentProject]?.title||''}</div></div>`).join('')}</div>
+    </div>`;
+  document.getElementById('profileModal').classList.add('open');
+}
+function closeProfile(){document.getElementById('profileModal').classList.remove('open');}
+
+/* ════ ADD MEMBER ════ */
+function openAddMember(){
+  const current=projects[currentProject].members;
+  document.getElementById('memberGrid').innerHTML=Object.values(allMembers).map(m=>`
+    <div class="member-opt ${current.includes(m.id)?'added':''}" onclick="addMemberToProject('${m.id}',this)">
+      <div class="av-sm" style="background:${m.color}">${m.initials}</div>
+      <div><div class="member-opt-name">${m.name}</div><div class="member-opt-role">${m.role}</div></div>
+      <span class="member-check">✓</span>
+    </div>`).join('');
+  document.getElementById('addMemberModal').classList.add('open');
+}
+function closeAddMember(){document.getElementById('addMemberModal').classList.remove('open');}
+function addMemberToProject(id,el){
+  const p=projects[currentProject]; if(p.members.includes(id))return;
+  p.members.push(id); el.classList.add('added'); el.querySelector('.member-check').style.display='block';
+  renderTeam(p.members); showToast(`${allMembers[id].name} agregado al proyecto`);
+  addAgentMsg(`<strong>Equipo actualizado:</strong> <span class="nl">${allMembers[id].name}</span> se unió como ${allMembers[id].role}.`,'Ahora mismo');
+}
+
+/* ════ HELPERS ════ */
+function showTyping(){const t=document.getElementById('typingIndicator');t.classList.add('visible');document.getElementById('agentMsgs').scrollTop=9999;}
+function hideTyping(){document.getElementById('typingIndicator').classList.remove('visible');}
+function showProcessing(txt){document.getElementById('processingText').textContent=txt;document.getElementById('processingBar').classList.add('visible');}
+function hideProcessing(){document.getElementById('processingBar').classList.remove('visible');}
+function addAgentMsg(html,time,isUser=false){
+  const msgs=document.getElementById('agentMsgs');
+  const div=document.createElement('div');div.className=isUser?'msg system':'msg';
+  div.innerHTML=`${html}<div class="msg-time">${time}</div>`;
+  msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;
+}
+function showToast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);}
+
+/* ════ INIT ════ */
+window.addEventListener('load',()=>{
+  selectProject('pedregal',null);
+  setTimeout(()=>{document.querySelectorAll('.prog-fill').forEach(b=>{const w=b.style.width;b.style.width='0%';setTimeout(()=>b.style.width=w,100);});},300);
+});
+</script>
+</body>
+</html>

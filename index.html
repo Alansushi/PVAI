@@ -307,6 +307,121 @@ nav { display:flex; justify-content:space-between; align-items:center; padding:2
 .chip.bl:hover { background:rgba(46,143,192,0.2); border-color:var(--accent); }
 
 /* ══════════════════════════
+   VIEW 3 — DASHBOARD DEMO v2
+══════════════════════════ */
+#view-dashboard { padding:0; }
+.demo-wrapper { display:flex; height:620px; overflow:hidden; border-top:1px solid rgba(255,255,255,0.05); }
+.demo-sidebar { width:210px; flex-shrink:0; background:#0A1B2E; border-right:1px solid rgba(255,255,255,0.07); display:flex; flex-direction:column; overflow-y:auto; }
+.demo-sidebar::-webkit-scrollbar { width:4px; }
+.demo-sidebar::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+.dsb-logo { padding:14px 16px 12px; border-bottom:1px solid rgba(255,255,255,0.06); }
+.dsb-logo-txt { font-family:'Playfair Display',serif; font-size:15px; font-weight:800; }
+.dsb-logo-txt span { color:var(--accent); }
+.dsb-logo-sub { font-size:9px; color:var(--gray); margin-top:2px; }
+.dsb-section { padding:12px 14px 4px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(138,155,176,0.5); }
+.dsb-item { display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:7px; margin:1px 6px; cursor:pointer; transition:all 0.15s; color:var(--gray); }
+.dsb-item:hover { background:rgba(255,255,255,0.06); color:var(--white); }
+.dsb-item.active { background:rgba(46,143,192,0.15); color:var(--accent); }
+.dsb-icon { font-size:13px; flex-shrink:0; }
+.dsb-name { flex:1; font-size:11.5px; font-weight:500; }
+.dsb-badge { font-size:8px; padding:1px 5px; border-radius:6px; font-weight:700; }
+.dsb-badge.ok { background:rgba(42,155,111,0.2); color:var(--green); }
+.dsb-badge.warn { background:rgba(224,155,61,0.2); color:var(--amber); }
+.dsb-badge.danger { background:rgba(217,79,79,0.2); color:var(--red); }
+.dsb-divider { height:1px; background:rgba(255,255,255,0.06); margin:8px 10px; }
+.dsb-footer { margin-top:auto; padding:10px 6px; border-top:1px solid rgba(255,255,255,0.06); }
+.demo-main { flex:1; overflow-y:auto; padding:16px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; }
+.demo-main::-webkit-scrollbar { width:4px; }
+.demo-main::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:4px; }
+.db2-topbar { display:flex; align-items:flex-start; justify-content:space-between; gap:10px; }
+.db2-tb-left h3 { font-family:'Playfair Display',serif; font-size:18px; font-weight:800; }
+.db2-tb-left p { font-size:10.5px; color:var(--gray); margin-top:2px; }
+.db2-tb-right { display:flex; align-items:center; gap:10px; flex-shrink:0; }
+.db2-avatars { display:flex; align-items:center; }
+.db2-avatar { width:26px; height:26px; border-radius:50%; border:2px solid #0C1F35; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:700; margin-left:-6px; color:#fff; flex-shrink:0; }
+.db2-avatar:first-child { margin-left:0; }
+.db2-tb-badge { font-size:10px; font-weight:700; padding:4px 11px; border-radius:10px; white-space:nowrap; }
+.db2-tb-badge.ok { background:rgba(42,155,111,0.18); color:var(--green); }
+.db2-tb-badge.warn { background:rgba(224,155,61,0.18); color:var(--amber); }
+.db2-tb-badge.danger { background:rgba(217,79,79,0.18); color:var(--red); }
+.db2-tb-btn { background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1); border-radius:7px; padding:5px 11px; font-size:11px; color:var(--white); cursor:pointer; transition:all 0.15s; font-family:'DM Sans',sans-serif; }
+.db2-tb-btn:hover { background:rgba(255,255,255,0.13); }
+.db2-kpis { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+.db2-panel { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.07); border-radius:12px; overflow:hidden; }
+.db2-panel-head { padding:10px 14px; border-bottom:1px solid rgba(255,255,255,0.06); display:flex; justify-content:space-between; align-items:center; }
+.db2-panel-head h3 { font-size:12px; font-weight:700; }
+.db2-panel-head span { font-size:10px; color:var(--gray); }
+.db2-gantt-rows { padding:10px 14px; display:flex; flex-direction:column; gap:6px; }
+.db2-gr { display:grid; grid-template-columns:148px 1fr 38px; align-items:center; gap:8px; }
+.db2-gr-name { font-size:10.5px; color:rgba(248,250,251,0.85); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.db2-gr-track { height:12px; background:rgba(255,255,255,0.05); border-radius:6px; position:relative; overflow:hidden; }
+.db2-gr-bar { height:100%; border-radius:6px; position:absolute; top:0; }
+.db2-gr-bar.ok { background:linear-gradient(90deg,rgba(42,155,111,0.8),rgba(42,155,111,0.5)); }
+.db2-gr-bar.warn { background:linear-gradient(90deg,rgba(224,155,61,0.85),rgba(224,155,61,0.55)); }
+.db2-gr-bar.danger { background:linear-gradient(90deg,rgba(217,79,79,0.9),rgba(217,79,79,0.65)); }
+.db2-gr-today { position:absolute; top:0; bottom:0; width:1.5px; background:rgba(29,166,160,0.9); z-index:2; pointer-events:none; }
+.db2-gr-deadline { position:absolute; top:0; bottom:0; width:0; border-left:1.5px dashed rgba(217,79,79,0.8); z-index:2; pointer-events:none; }
+.db2-gr-owner { font-size:9.5px; text-align:right; }
+.db2-gantt-legend { display:flex; gap:14px; padding:5px 14px 10px; align-items:center; }
+.db2-gantt-legend span { font-size:9px; color:var(--gray); display:flex; align-items:center; gap:5px; }
+.db2-gantt-legend .tl { display:inline-block; width:14px; height:2px; background:rgba(29,166,160,0.9); border-radius:1px; }
+.db2-gantt-legend .dl { display:inline-block; width:14px; height:0; border-top:1.5px dashed rgba(217,79,79,0.8); }
+.db2-kanban-cols { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; padding:12px; }
+.db2-kk-col-head { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:7px; padding:5px 8px; border-radius:6px; }
+.db2-kk-col-head.ok { background:rgba(42,155,111,0.12); color:var(--green); }
+.db2-kk-col-head.warn { background:rgba(224,155,61,0.12); color:var(--amber); }
+.db2-kk-col-head.danger { background:rgba(217,79,79,0.12); color:var(--red); }
+.db2-kk-card { background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:9px 11px; margin-bottom:7px; cursor:pointer; transition:all 0.15s; }
+.db2-kk-card:hover { background:rgba(255,255,255,0.09); border-color:rgba(46,143,192,0.5); transform:translateY(-1px); }
+.db2-kk-card:last-child { margin-bottom:0; }
+.db2-kk-name { font-size:11px; font-weight:600; color:var(--white); margin-bottom:5px; line-height:1.3; }
+.db2-kk-meta { display:flex; align-items:center; justify-content:space-between; gap:4px; }
+.db2-kk-owner { font-size:9.5px; }
+.db2-kk-date { font-size:9.5px; }
+.db2-kk-date.ok { color:var(--green); }
+.db2-kk-date.soon { color:var(--amber); }
+.db2-kk-date.late { color:var(--red); font-weight:700; }
+.db2-nl-tag { display:inline-flex; font-size:8.5px; font-weight:700; background:rgba(124,92,191,0.2); color:#B89EE8; padding:1px 5px; border-radius:5px; margin-top:4px; }
+.demo-agent { width:295px; flex-shrink:0; background:linear-gradient(160deg,rgba(14,37,66,0.98),rgba(10,27,46,0.99)); border-left:1px solid rgba(46,143,192,0.18); display:flex; flex-direction:column; overflow:hidden; }
+.da-header { padding:12px 14px; border-bottom:1px solid rgba(46,143,192,0.15); display:flex; align-items:center; gap:8px; }
+.da-dot2 { width:7px; height:7px; background:var(--teal); border-radius:50%; animation:pulse 2s infinite; flex-shrink:0; }
+.da-title2 { font-size:12px; font-weight:700; color:var(--accent); }
+.da-proj-lbl { font-size:10px; color:var(--gray); margin-left:auto; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px; }
+.da-msgs { flex:1; overflow-y:auto; padding:12px; display:flex; flex-direction:column; gap:8px; }
+.da-msgs::-webkit-scrollbar { width:3px; }
+.da-msgs::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.1); border-radius:3px; }
+.agent-msg2 { background:rgba(255,255,255,0.05); border-left:2px solid var(--accent); border-radius:0 8px 8px 0; padding:9px 11px; font-size:11px; line-height:1.65; color:#C0D0E0; animation:si 0.4s ease both; }
+.agent-msg2-user { background:rgba(46,143,192,0.12); border:1px solid rgba(46,143,192,0.3); border-radius:8px; padding:8px 11px; font-size:11px; color:var(--accent); align-self:flex-end; max-width:92%; text-align:right; }
+.agent-typing2 { display:flex; align-items:center; gap:5px; padding:9px 12px; }
+.typing-dot2 { width:6px; height:6px; background:var(--accent); border-radius:50%; animation:typBounce 1.2s infinite; opacity:0.7; }
+.typing-dot2:nth-child(2) { animation-delay:0.2s; }
+.typing-dot2:nth-child(3) { animation-delay:0.4s; }
+@keyframes typBounce { 0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)} }
+.da-chips-area { padding:10px 12px; border-top:1px solid rgba(255,255,255,0.06); }
+.da-chips-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:#7C5CBF; margin-bottom:7px; }
+.agent-chip2 { display:block; width:100%; padding:7px 10px; border-radius:7px; font-size:10.5px; font-weight:500; cursor:pointer; transition:all 0.2s; text-align:left; margin-bottom:5px; border:none; font-family:'DM Sans',sans-serif; }
+.agent-chip2:last-child { margin-bottom:0; }
+.agent-chip2.nl { background:rgba(124,92,191,0.1); border:1px solid rgba(124,92,191,0.25); color:#B89EE8; }
+.agent-chip2.nl:hover { background:rgba(124,92,191,0.22); border-color:#7C5CBF; }
+.agent-chip2.bl { background:rgba(46,143,192,0.1); border:1px solid rgba(46,143,192,0.25); color:var(--accent); }
+.agent-chip2.bl:hover { background:rgba(46,143,192,0.2); border-color:var(--accent); }
+.da-input-row { padding:10px 12px; border-top:1px solid rgba(255,255,255,0.06); display:flex; gap:6px; }
+.da-input-row input { flex:1; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:7px; padding:6px 10px; font-size:11px; color:var(--white); font-family:'DM Sans',sans-serif; outline:none; min-width:0; }
+.da-input-row input::placeholder { color:rgba(138,155,176,0.5); }
+.da-input-row input:focus { border-color:rgba(46,143,192,0.5); }
+.da-input-row button { background:var(--accent); border:none; border-radius:7px; padding:6px 12px; color:#fff; font-size:13px; cursor:pointer; transition:all 0.15s; flex-shrink:0; }
+.da-input-row button:hover { background:#3EA0D4; }
+.demo-modal-ov { position:fixed; inset:0; background:rgba(0,0,0,0.72); z-index:300; display:flex; align-items:center; justify-content:center; animation:fadeIn 0.2s; }
+.demo-modal-box { background:#0F2D4A; border:1px solid rgba(46,143,192,0.35); border-radius:16px; padding:24px 28px; width:400px; max-width:92vw; position:relative; }
+.demo-modal-box h3 { font-size:16px; font-weight:700; margin-bottom:4px; }
+.demo-modal-sub { font-size:11px; color:var(--gray); margin-bottom:18px; }
+.demo-modal-close { position:absolute; top:14px; right:16px; background:rgba(255,255,255,0.08); border:none; border-radius:6px; padding:4px 10px; color:var(--white); cursor:pointer; font-size:12px; font-family:'DM Sans',sans-serif; }
+.demo-modal-close:hover { background:rgba(255,255,255,0.15); }
+.dm-field { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:rgba(255,255,255,0.04); border-radius:8px; margin-bottom:8px; }
+.dm-field .dmfl { font-size:11px; color:var(--gray); }
+.dm-field .dmfv { font-size:11.5px; font-weight:600; }
+
+/* ══════════════════════════
    VIEW 4 — ROADMAP
 ══════════════════════════ */
 #view-roadmap { padding:40px 48px; }
@@ -599,51 +714,75 @@ nav { display:flex; justify-content:space-between; align-items:center; padding:2
 
 <!-- ══ DASHBOARD ══ -->
 <div id="view-dashboard" class="view">
-  <div class="db-top">
-    <div><h2>Buenos días, Arq. Ramírez</h2><p>Lunes 9 de marzo, 2026 · 3 proyectos activos · 1 alerta urgente</p></div>
-    <div class="db-badge">Vista previa del producto</div>
-  </div>
-  <div class="db-kpis">
-    <div class="kpi g"><div class="kl">Próximo cobro</div><div class="kv">$45K</div><div class="ks">Casa Pedregal · 2ª exhibición</div><div class="kp">⏳ 3 entregables pendientes</div></div>
-    <div class="kpi a"><div class="kl">En riesgo esta semana</div><div class="kv">2</div><div class="ks">entregables sin avance</div><div class="kp">⚠️ Requieren acción hoy</div></div>
-    <div class="kpi r"><div class="kl">Cobros vencidos</div><div class="kv">$36K</div><div class="ks">Remodelación Coyoacán</div><div class="kp">🔴 18 días vencido</div></div>
-    <div class="kpi b"><div class="kl">Pendientes actualizados hoy</div><div class="kv">4</div><div class="ks">tareas desde la minuta de ayer</div><div class="kp">✦ El agente los armó solo</div></div>
-  </div>
-  <div class="db-main">
-    <div style="display:flex;flex-direction:column;gap:12px;">
-      <div class="db-panel">
-        <div class="dbph"><h3>Proyectos activos</h3><span>Ver todos →</span></div>
-        <div class="pr"><div><div class="prn">Casa Pedregal</div><div class="prm">Proyecto ejecutivo · Jorge, Sofía, Ext. Estructural</div></div><div><div class="pb-top">65%</div><div class="pb-bar"><div class="pb-fill a" style="width:65%"></div></div></div><div class="sb warn">⚠️ En riesgo</div></div>
-        <div class="pr"><div><div class="prn">Oficinas Polanco</div><div class="prm">Anteproyecto · María, Carlos</div></div><div><div class="pb-top">40%</div><div class="pb-bar"><div class="pb-fill g" style="width:40%"></div></div></div><div class="sb ok">✓ Al corriente</div></div>
-        <div class="pr"><div><div class="prn">Remodelación Coyoacán</div><div class="prm">Entrega final · Arq. Ramírez</div></div><div><div class="pb-top">90%</div><div class="pb-bar"><div class="pb-fill r" style="width:90%"></div></div></div><div class="sb danger">🔴 Cobro vencido</div></div>
+  <div class="demo-wrapper">
+    <!-- SIDEBAR -->
+    <div class="demo-sidebar">
+      <div class="dsb-logo">
+        <div class="dsb-logo-txt">Proyecto<span>.</span>Vivo</div>
+        <div class="dsb-logo-sub">● Agente IA activo</div>
       </div>
-      <div class="db-panel">
-        <div class="dbph"><h3>Casa Pedregal · Pendientes del proyecto</h3><span>12 de 18 · ✦ 4 armados por el agente hoy</span></div>
-        <div class="dr"><div class="dd ok">✓</div><div class="di"><div class="dn">Planta arquitectónica PB</div><div class="dm">v3 · Jorge · 9 mar</div></div><div class="ddate ok">Entregado</div></div>
-        <div class="dr"><div class="dd prog">↻</div><div class="di"><div class="dn">Plano hidráulico y sanitario</div><div class="dm">v1 · En proceso · Sofía</div></div><div class="ddate soon">Vence 14 mar</div></div>
-        <div class="dr"><div class="dd warn">!</div><div class="di"><div class="dn">Ampliación cocina a 14m² <span class="nl-src">✦ minuta</span></div><div class="dm">Agregado automáticamente · Reunión 9 mar · Jorge</div></div><div class="ddate soon">Vence 16 mar</div></div>
-        <div class="dr"><div class="dd warn">!</div><div class="di"><div class="dn">Medio baño en PB <span class="nl-src">✦ minuta</span></div><div class="dm">Decisión cliente · Reunión 9 mar · Sofía</div></div><div class="ddate soon">Vence 19 mar</div></div>
-        <div class="dr"><div class="dd danger">✕</div><div class="di"><div class="dn">Memoria de cálculo estructural</div><div class="dm">Sin avance · 6 días · Ext. Estructural</div></div><div class="ddate late">Vence 18 mar</div></div>
-        <div class="dr"><div class="dd ok">✓</div><div class="di"><div class="dn">Especificaciones técnicas</div><div class="dm">Generado por el agente · v2 · 7 mar</div></div><div class="ddate ok">Aprobado</div></div>
+      <div class="dsb-section">General</div>
+      <div class="dsb-item">
+        <span class="dsb-icon">📊</span>
+        <span class="dsb-name">Dashboard</span>
+      </div>
+      <div class="dsb-section">Proyectos activos</div>
+      <div class="dsb-item active" id="dsb-pedregal" onclick="switchDemoProject('pedregal',this)">
+        <span class="dsb-icon">🏠</span>
+        <span class="dsb-name">Casa Pedregal</span>
+        <span class="dsb-badge warn">⚠</span>
+      </div>
+      <div class="dsb-item" id="dsb-polanco" onclick="switchDemoProject('polanco',this)">
+        <span class="dsb-icon">🏢</span>
+        <span class="dsb-name">Oficinas Polanco</span>
+        <span class="dsb-badge ok">✓</span>
+      </div>
+      <div class="dsb-item" id="dsb-coyoacan" onclick="switchDemoProject('coyoacan',this)">
+        <span class="dsb-icon">🏡</span>
+        <span class="dsb-name">Remodelación Coyoacán</span>
+        <span class="dsb-badge danger">!</span>
+      </div>
+      <div class="dsb-divider"></div>
+      <div class="dsb-section">Acciones rápidas</div>
+      <div class="dsb-item" onclick="sendDemoMinuta()">
+        <span class="dsb-icon">📋</span>
+        <span class="dsb-name">Procesar minuta</span>
+      </div>
+      <div class="dsb-item" onclick="askDemoAgent('reporte')">
+        <span class="dsb-icon">📄</span>
+        <span class="dsb-name">Generar reporte</span>
+      </div>
+      <div class="dsb-footer">
+        <div class="dsb-item">
+          <span class="dsb-icon">👤</span>
+          <span class="dsb-name">Arq. Ramírez</span>
+        </div>
       </div>
     </div>
-    <div class="cp">
-      <div class="cph"><div class="cpd"></div><h3>Agente IA · Proyecto Vivo</h3></div>
-      <div class="cp-msgs">
-        <div class="cm"><strong>Minuta 9 mar procesada:</strong> Encontré <span class="nl">2 cambios de alcance</span> y <span class="nl">1 fecha de entrega comprometida</span>. Agregué 4 pendientes al proyecto y marqué la memoria descriptiva como desactualizada.</div>
-        <div class="cm"><strong>Casa Pedregal:</strong> El cobro de <span class="warn">$45,000</span> depende de la memoria estructural. El externo lleva <span class="err">6 días sin avance</span>. Si no hay movimiento hoy, el cobro se mueve 2 semanas.</div>
-        <div class="cm"><strong>Riesgo de entrega:</strong> La fecha del <span class="warn">25 mar</span> para la 2ª exhibición requiere planos estructurales antes del 18 mar. <span class="err">Hoy es el último día</span> para confirmar con el externo.</div>
-        <div class="cm"><strong>Coyoacán:</strong> Proyecto al <span class="ok">90%</span> pero cobro final con <span class="err">18 días vencido</span>. Sugiero generar el reporte de avance ahora y enviarlo al cliente.</div>
+    <!-- MAIN CONTENT -->
+    <div class="demo-main">
+      <div id="db2Topbar" class="db2-topbar"></div>
+      <div id="db2Kpis" class="db2-kpis"></div>
+      <div id="db2Gantt" class="db2-panel"></div>
+      <div id="db2Kanban" class="db2-panel"></div>
+    </div>
+    <!-- AGENT PANEL -->
+    <div class="demo-agent">
+      <div class="da-header">
+        <div class="da-dot2"></div>
+        <div class="da-title2">Agente IA · Proyecto Vivo</div>
+        <div class="da-proj-lbl" id="daAgentLabel">Casa Pedregal</div>
       </div>
-      <div class="cp-input">
-        <div class="cp-input-lbl">✦ Escribe en lenguaje natural</div>
-        <div class="cp-chips">
-          <div class="chip nl">¿Qué riesgos tiene Casa Pedregal esta semana?</div>
-          <div class="chip nl">"El cliente aprobó cambiar acabado de fachada"</div>
-          <div class="chip nl">¿Qué falta para cobrar el 25 de marzo?</div>
-          <div class="chip bl">Genera reporte de avance de Coyoacán</div>
-          <div class="chip bl">¿Estamos en tiempo para entregar el 30 de abril?</div>
-        </div>
+      <div class="da-msgs" id="daMsgs"></div>
+      <div class="da-chips-area">
+        <div class="da-chips-lbl">✦ Pregunta en lenguaje natural</div>
+        <button class="agent-chip2 nl" onclick="askDemoAgent('riesgos')">¿Qué riesgos tiene esta semana?</button>
+        <button class="agent-chip2 nl" onclick="askDemoAgent('cobro')">¿Qué falta para cobrar?</button>
+        <button class="agent-chip2 bl" onclick="askDemoAgent('tiempo')">¿Estamos en tiempo para la entrega?</button>
+      </div>
+      <div class="da-input-row">
+        <input type="text" id="daInputTxt" placeholder="Escribe en lenguaje natural..." onkeydown="if(event.key==='Enter')sendDemoFreeMsg()">
+        <button onclick="sendDemoFreeMsg()">→</button>
       </div>
     </div>
   </div>
@@ -852,6 +991,7 @@ function switchView(view, btn) {
   btn.classList.add('active');
 
   if (view === 'flujo') resetDiagram();
+  if (view === 'dashboard') setTimeout(initDemoView, 0);
 }
 
 /* ─── Progress bars ─── */
@@ -958,6 +1098,326 @@ function runDiagram() {
   for (let i = 1; i <= 6; i++) {
     animateDot('dot' + i, 'p' + i, delays[i-1], 'out' + i, colors[i-1]);
   }
+}
+
+/* ─── DEMO DASHBOARD DATA ─── */
+const MEMBERS_DATA = {
+  jorge:   { color:'#2E8FC0', initial:'J', name:'Jorge' },
+  sofia:   { color:'#1DA6A0', initial:'S', name:'Sofía' },
+  carlos:  { color:'#7C5CBF', initial:'C', name:'Carlos' },
+  maria:   { color:'#E09B3D', initial:'M', name:'María' },
+  ramirez: { color:'#2A9B6F', initial:'R', name:'Arq. Ramírez' },
+  ext:     { color:'#8A9BB0', initial:'E', name:'Ext. Estructural' },
+};
+
+const DEMO_DATA = {
+  pedregal: {
+    name:'Casa Pedregal', type:'Proyecto ejecutivo · Jorge, Sofía, Ext. Estructural',
+    status:'warn', members:['jorge','sofia','carlos','ext'],
+    kpis:[
+      {label:'Próximo cobro',    value:'$45K', sub:'2ª exhibición · 25 mar',    pill:'⏳ 3 entregables pendientes', color:'a'},
+      {label:'En riesgo',        value:'2',    sub:'entregables sin avance',      pill:'⚠️ Requieren acción hoy',   color:'a'},
+      {label:'Cobros vencidos',  value:'$0',   sub:'Al corriente',                pill:'✓ Sin vencidos',            color:'g'},
+      {label:'Tareas agente',    value:'4',    sub:'desde minuta de ayer',         pill:'✦ El agente las armó',      color:'b'},
+    ],
+    gantt:{
+      rows:[
+        {name:'Planta arq. PB',              start:0,  end:28, status:'ok',     owner:'jorge'},
+        {name:'Plano hidráulico y sanitario', start:18, end:58, status:'warn',   owner:'sofia'},
+        {name:'Ampliación cocina a 14m²',    start:32, end:68, status:'warn',   owner:'jorge'},
+        {name:'Medio baño en PB',            start:36, end:72, status:'warn',   owner:'sofia'},
+        {name:'Mem. cálculo estructural',    start:22, end:60, status:'danger', owner:'ext'},
+        {name:'Especificaciones técnicas',   start:5,  end:48, status:'ok',     owner:'carlos'},
+        {name:'Planos eléctricos',           start:42, end:82, status:'warn',   owner:'sofia'},
+      ],
+      today:48, deadline:78,
+    },
+    kanban:[
+      {id:'ped1',name:'Planta arquitectónica PB',     owner:'jorge',   date:'9 mar',  ds:'ok',   status:'ok',     src:null},
+      {id:'ped2',name:'Especificaciones técnicas',    owner:'carlos',  date:'7 mar',  ds:'ok',   status:'ok',     src:'agente'},
+      {id:'ped3',name:'Plano hidráulico y sanitario', owner:'sofia',   date:'14 mar', ds:'soon', status:'warn',   src:null},
+      {id:'ped4',name:'Ampliación cocina 14m²',       owner:'jorge',   date:'16 mar', ds:'soon', status:'warn',   src:'minuta'},
+      {id:'ped5',name:'Medio baño en PB',             owner:'sofia',   date:'19 mar', ds:'soon', status:'warn',   src:'minuta'},
+      {id:'ped6',name:'Mem. cálculo estructural',     owner:'ext',     date:'18 mar', ds:'late', status:'danger', src:null},
+      {id:'ped7',name:'Planos eléctricos',            owner:'sofia',   date:'22 mar', ds:'late', status:'danger', src:null},
+    ],
+    messages:[
+      {type:'agent',text:'<strong>Minuta 9 mar procesada:</strong> Encontré <span style="color:#B89EE8">2 cambios de alcance</span> y <span style="color:#B89EE8">1 fecha comprometida</span>. Agregué 4 pendientes al proyecto.'},
+      {type:'agent',text:'<strong>Casa Pedregal:</strong> El cobro de <span style="color:#E09B3D">$45,000</span> depende de la memoria estructural. El externo lleva <span style="color:#D94F4F">6 días sin avance</span>. Si no hay movimiento hoy, el cobro se mueve 2 semanas.'},
+      {type:'agent',text:'<strong>Alerta:</strong> La fecha del <span style="color:#E09B3D">25 mar</span> requiere estructura antes del 18 mar. <span style="color:#D94F4F">Hoy es el último día</span> para confirmar con el externo.'},
+    ],
+    resp:{
+      riesgos:'El riesgo principal: <strong>Mem. cálculo estructural</strong> de Ext. Estructural — <span style="color:#D94F4F">6 días sin avance</span>. Esto bloquea el cobro de $45K. Segundo riesgo: planos eléctricos sin iniciar.',
+      cobro:'Para liberar los <strong>$45,000 de la 2ª exhibición</strong> faltan: (1) <span style="color:#D94F4F">Mem. estructural — bloqueada</span>, (2) Plano hidráulico en proceso, vence 14 mar, (3) Cuadro de áreas actualizado.',
+      tiempo:'Con el ritmo actual la entrega del 25 mar es <span style="color:#E09B3D">ajustada pero posible</span> si el externo entrega esta semana. Si no, la fecha realista sería el 8 abr.',
+      reporte:'Generando reporte de <strong>Casa Pedregal</strong>... Proyecto al <span style="color:#E09B3D">65%</span>. Incluyo KPIs, entregables pendientes y la alerta de riesgo estructural.',
+      minuta:'Procesé tu minuta. Encontré <span style="color:#B89EE8">2 acuerdos</span> y <span style="color:#B89EE8">1 fecha comprometida</span>. Creé 4 nuevas tareas y actualicé el backlog de Casa Pedregal.',
+    },
+  },
+  polanco: {
+    name:'Oficinas Polanco', type:'Anteproyecto · María, Carlos',
+    status:'ok', members:['maria','carlos'],
+    kpis:[
+      {label:'Próximo cobro',   value:'$28K', sub:'1ª exhibición · 10 abr',     pill:'✓ Entregables al corriente', color:'g'},
+      {label:'En riesgo',       value:'0',    sub:'todo al corriente',            pill:'✓ Sin alertas activas',      color:'g'},
+      {label:'Cobros vencidos', value:'$0',   sub:'Sin vencidos',                 pill:'✓ Al corriente',             color:'g'},
+      {label:'Tareas agente',   value:'1',    sub:'plan de trabajo generado',     pill:'✦ 5 entregables armados',    color:'b'},
+    ],
+    gantt:{
+      rows:[
+        {name:'Programa arquitectónico',  start:0,  end:20, status:'ok',   owner:'maria'},
+        {name:'Anteproyecto planta baja', start:12, end:48, status:'ok',   owner:'carlos'},
+        {name:'Fachadas y cortes',        start:28, end:65, status:'warn', owner:'maria'},
+        {name:'Memoria conceptual',       start:15, end:52, status:'ok',   owner:'maria'},
+        {name:'Presentación al cliente',  start:58, end:82, status:'warn', owner:'carlos'},
+      ],
+      today:42, deadline:80,
+    },
+    kanban:[
+      {id:'pol1',name:'Programa arquitectónico',  owner:'maria',  date:'15 mar', ds:'ok',   status:'ok',   src:null},
+      {id:'pol2',name:'Anteproyecto planta baja', owner:'carlos', date:'20 mar', ds:'ok',   status:'ok',   src:null},
+      {id:'pol3',name:'Memoria conceptual',       owner:'maria',  date:'22 mar', ds:'ok',   status:'ok',   src:'agente'},
+      {id:'pol4',name:'Fachadas y cortes',        owner:'maria',  date:'28 mar', ds:'soon', status:'warn', src:null},
+      {id:'pol5',name:'Presentación al cliente',  owner:'carlos', date:'10 abr', ds:'soon', status:'warn', src:null},
+    ],
+    messages:[
+      {type:'agent',text:'<strong>Oficinas Polanco:</strong> Proyecto al <span style="color:#2A9B6F">40%</span> y sin alertas activas. El programa arquitectónico fue aprobado por el cliente el 15 mar.'},
+      {type:'agent',text:'<strong>Plan de trabajo generado:</strong> Desde la reunión de inicio armé <span style="color:#B89EE8">5 entregables</span>. El próximo cobro de $28K está vinculado a la entrega del anteproyecto completo.'},
+    ],
+    resp:{
+      riesgos:'Proyecto sin riesgos críticos. El único punto a vigilar: <span style="color:#E09B3D">Fachadas y cortes</span> vencen el 28 mar — María tiene el 60% avanzado.',
+      cobro:'El cobro de <strong>$28,000</strong> está vinculado al anteproyecto completo. Los entregables van al corriente. <span style="color:#2A9B6F">Sin bloqueos actuales.</span>',
+      tiempo:'El proyecto está <span style="color:#2A9B6F">en tiempo</span>. La presentación al cliente el 10 abr es alcanzable con el ritmo actual.',
+      reporte:'Generando reporte de <strong>Oficinas Polanco</strong>... Proyecto al <span style="color:#2A9B6F">40%</span>. Incluyo avance por entregable y fechas de cobro proyectadas.',
+      minuta:'Procesé la minuta de Polanco. Encontré <span style="color:#B89EE8">3 acuerdos</span> — ninguno cambia el alcance. El plan de trabajo sigue vigente.',
+    },
+  },
+  coyoacan: {
+    name:'Remodelación Coyoacán', type:'Entrega final · Arq. Ramírez, Jorge',
+    status:'danger', members:['ramirez','jorge'],
+    kpis:[
+      {label:'Cobro vencido',   value:'$36K', sub:'Cobro final · 18 días vencido', pill:'🔴 Urgente: contactar cliente',    color:'r'},
+      {label:'En riesgo',       value:'1',    sub:'falta firma del cliente',         pill:'⚠️ Acta de entrega pendiente',  color:'a'},
+      {label:'Avance',          value:'90%',  sub:'casi terminado',                  pill:'→ 2 entregables finales',         color:'b'},
+      {label:'Tareas agente',   value:'2',    sub:'reporte listo para enviar',        pill:'✦ Reporte de avance generado',   color:'b'},
+    ],
+    gantt:{
+      rows:[
+        {name:'Memoria descriptiva final', start:0,  end:38, status:'ok',     owner:'ramirez'},
+        {name:'Especificaciones v3',        start:10, end:48, status:'ok',     owner:'jorge'},
+        {name:'Planos as-built',            start:28, end:72, status:'ok',     owner:'jorge'},
+        {name:'Reporte fotográfico',        start:55, end:82, status:'danger', owner:'ramirez'},
+        {name:'Acta de entrega',            start:72, end:96, status:'danger', owner:'ramirez'},
+      ],
+      today:90, deadline:72,
+    },
+    kanban:[
+      {id:'coy1',name:'Memoria descriptiva final', owner:'ramirez', date:'1 mar',  ds:'ok',   status:'ok',     src:null},
+      {id:'coy2',name:'Especificaciones v3',        owner:'jorge',   date:'5 mar',  ds:'ok',   status:'ok',     src:'agente'},
+      {id:'coy3',name:'Planos as-built',            owner:'jorge',   date:'10 mar', ds:'late', status:'danger', src:null},
+      {id:'coy4',name:'Reporte fotográfico',        owner:'ramirez', date:'14 mar', ds:'late', status:'danger', src:null},
+      {id:'coy5',name:'Acta de entrega',            owner:'ramirez', date:'18 mar', ds:'late', status:'danger', src:null},
+    ],
+    messages:[
+      {type:'agent',text:'<strong>Coyoacán:</strong> Proyecto al <span style="color:#2A9B6F">90%</span> pero cobro final con <span style="color:#D94F4F">18 días vencido</span>. Generé el reporte de avance — puedes enviarlo al cliente ahora.'},
+      {type:'agent',text:'<strong>Acción recomendada:</strong> Falta la <span style="color:#E09B3D">firma del acta de entrega</span> para cerrar el proyecto y liberar el cobro de $36K.'},
+    ],
+    resp:{
+      riesgos:'El riesgo ya materializó: <span style="color:#D94F4F">cobro de $36K con 18 días vencido</span>. Causa: acta de entrega sin firma del cliente. Sugiero contactarlo hoy.',
+      cobro:'Para liberar <strong>$36,000</strong>: (1) <span style="color:#D94F4F">Acta de entrega firmada — urgente</span>, (2) Reporte fotográfico entregado. Proyecto técnicamente al 90%.',
+      tiempo:'El proyecto está <span style="color:#2A9B6F">técnicamente casi terminado</span>. Pendientes: reporte fotográfico y acta con firma. Estimado: 3–5 días si el cliente responde.',
+      reporte:'Reporte de <strong>Remodelación Coyoacán</strong> generado: avance al 90%, entregables completados, y la situación del cobro vencido para presentar al cliente.',
+      minuta:'Procesé la minuta. Identifiqué que el cliente confirmó disponibilidad para firma — creé tarea urgente para coordinar visita de entrega antes del viernes.',
+    },
+  },
+};
+
+/* ─── DEMO DASHBOARD LOGIC ─── */
+let demoCurProject = 'pedregal';
+let demoTyping = false;
+
+function initDemoView() {
+  const el = document.getElementById('dsb-pedregal');
+  if (el) switchDemoProject('pedregal', el);
+}
+
+function switchDemoProject(id, el) {
+  demoCurProject = id;
+  const proj = DEMO_DATA[id];
+  ['pedregal','polanco','coyoacan'].forEach(pid => {
+    const item = document.getElementById('dsb-' + pid);
+    if (item) item.classList.toggle('active', pid === id);
+  });
+  const lbl = document.getElementById('daAgentLabel');
+  if (lbl) lbl.textContent = proj.name;
+  renderTopBar(proj);
+  renderKpis(proj.kpis);
+  renderGantt(proj.gantt, proj.name);
+  renderKanban(proj.kanban, proj.name);
+  renderAgentMessages(proj.messages);
+}
+
+function renderTopBar(proj) {
+  const statusLabels = {ok:'✓ Al corriente', warn:'⚠️ En riesgo', danger:'🔴 Problema urgente'};
+  const avatarsHtml = proj.members.map((mid, i) => {
+    const m = MEMBERS_DATA[mid];
+    return `<div class="db2-avatar" style="background:${m.color};z-index:${proj.members.length - i}" title="${m.name}">${m.initial}</div>`;
+  }).join('');
+  document.getElementById('db2Topbar').innerHTML = `
+    <div class="db2-tb-left">
+      <h3>${proj.name}</h3>
+      <p>${proj.type}</p>
+    </div>
+    <div class="db2-tb-right">
+      <div class="db2-avatars">${avatarsHtml}</div>
+      <div class="db2-tb-badge ${proj.status}">${statusLabels[proj.status]}</div>
+      <button class="db2-tb-btn" onclick="askDemoAgent('reporte')">Generar reporte</button>
+    </div>`;
+}
+
+function renderKpis(kpis) {
+  document.getElementById('db2Kpis').innerHTML = kpis.map(k =>
+    `<div class="kpi ${k.color}"><div class="kl">${k.label}</div><div class="kv">${k.value}</div><div class="ks">${k.sub}</div><div class="kp">${k.pill}</div></div>`
+  ).join('');
+}
+
+function renderGantt(g, projName) {
+  const rowsHtml = g.rows.map(r => {
+    const m = MEMBERS_DATA[r.owner];
+    return `<div class="db2-gr">
+      <div class="db2-gr-name" title="${r.name}">${r.name}</div>
+      <div class="db2-gr-track">
+        <div class="db2-gr-bar ${r.status}" style="left:${r.start}%;width:${r.end - r.start}%"></div>
+        <div class="db2-gr-today" style="left:${g.today}%"></div>
+        <div class="db2-gr-deadline" style="left:${g.deadline}%"></div>
+      </div>
+      <div class="db2-gr-owner" style="color:${m.color}">${m.initial}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('db2Gantt').innerHTML = `
+    <div class="db2-panel-head"><h3>Cronograma · ${projName}</h3><span>${g.rows.length} entregables</span></div>
+    <div class="db2-gantt-rows">${rowsHtml}</div>
+    <div class="db2-gantt-legend">
+      <span><span class="tl"></span> Hoy</span>
+      <span><span class="dl"></span> Deadline</span>
+    </div>`;
+}
+
+function renderKanban(deliverables, projName) {
+  const cols = {ok:{label:'✓ Completados',items:[]}, warn:{label:'⏳ En proceso',items:[]}, danger:{label:'🔴 En riesgo',items:[]}};
+  deliverables.forEach(d => cols[d.status].items.push(d));
+  const colsHtml = Object.entries(cols).map(([status, col]) => {
+    const cards = col.items.map(d => {
+      const m = MEMBERS_DATA[d.owner];
+      const tag = d.src ? `<div class="db2-nl-tag">✦ ${d.src}</div>` : '';
+      return `<div class="db2-kk-card" onclick="openTaskModal('${d.id}')">
+        <div class="db2-kk-name">${d.name}</div>${tag}
+        <div class="db2-kk-meta">
+          <div class="db2-kk-owner" style="color:${m.color}">● ${m.name}</div>
+          <div class="db2-kk-date ${d.ds}">${d.date}</div>
+        </div>
+      </div>`;
+    }).join('');
+    return `<div>
+      <div class="db2-kk-col-head ${status}">${col.label} <span style="opacity:0.6">(${col.items.length})</span></div>
+      ${cards || '<div style="font-size:10px;color:rgba(138,155,176,0.35);padding:6px 4px">Sin entregables</div>'}
+    </div>`;
+  }).join('');
+  document.getElementById('db2Kanban').innerHTML = `
+    <div class="db2-panel-head"><h3>Tablero de entregables · ${projName}</h3><span>${deliverables.length} entregables</span></div>
+    <div class="db2-kanban-cols">${colsHtml}</div>`;
+}
+
+function renderAgentMessages(msgs) {
+  const el = document.getElementById('daMsgs');
+  el.innerHTML = msgs.map(m =>
+    `<div class="${m.type === 'user' ? 'agent-msg2-user' : 'agent-msg2'}">${m.text}</div>`
+  ).join('');
+  el.scrollTop = el.scrollHeight;
+}
+
+function addAgentMsg(text, type) {
+  const el = document.getElementById('daMsgs');
+  const div = document.createElement('div');
+  div.className = type === 'user' ? 'agent-msg2-user' : 'agent-msg2';
+  div.innerHTML = text;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+}
+
+function askDemoAgent(type) {
+  if (demoTyping) return;
+  const proj = DEMO_DATA[demoCurProject];
+  const response = proj.resp[type];
+  if (!response) return;
+  const questions = {riesgos:'¿Qué riesgos tiene esta semana?', cobro:'¿Qué falta para cobrar?', tiempo:'¿Estamos en tiempo para la entrega?', reporte:'Generar reporte de avance', minuta:'Procesar minuta'};
+  addAgentMsg(questions[type] || type, 'user');
+  demoTyping = true;
+  const el = document.getElementById('daMsgs');
+  const typing = document.createElement('div');
+  typing.className = 'agent-typing2';
+  typing.innerHTML = '<div class="typing-dot2"></div><div class="typing-dot2"></div><div class="typing-dot2"></div>';
+  el.appendChild(typing);
+  el.scrollTop = el.scrollHeight;
+  setTimeout(() => {
+    typing.remove();
+    addAgentMsg(response, 'agent');
+    demoTyping = false;
+  }, 1500);
+}
+
+function sendDemoMinuta() { askDemoAgent('minuta'); }
+
+function sendDemoFreeMsg() {
+  const input = document.getElementById('daInputTxt');
+  const text = (input.value || '').trim();
+  if (!text || demoTyping) return;
+  input.value = '';
+  addAgentMsg(text, 'user');
+  demoTyping = true;
+  const el = document.getElementById('daMsgs');
+  const typing = document.createElement('div');
+  typing.className = 'agent-typing2';
+  typing.innerHTML = '<div class="typing-dot2"></div><div class="typing-dot2"></div><div class="typing-dot2"></div>';
+  el.appendChild(typing);
+  el.scrollTop = el.scrollHeight;
+  setTimeout(() => {
+    typing.remove();
+    const proj = DEMO_DATA[demoCurProject];
+    addAgentMsg(proj.resp.minuta, 'agent');
+    demoTyping = false;
+  }, 1500);
+}
+
+function openTaskModal(taskId) {
+  let task = null;
+  for (const pid in DEMO_DATA) {
+    const f = DEMO_DATA[pid].kanban.find(t => t.id === taskId);
+    if (f) { task = f; break; }
+  }
+  if (!task) return;
+  const m = MEMBERS_DATA[task.owner];
+  const statusLabels = {ok:'✓ Completado', warn:'⏳ En proceso', danger:'🔴 En riesgo'};
+  const srcLabel = task.src === 'minuta' ? '✦ Generado desde minuta' : task.src === 'agente' ? '✦ Generado por el agente' : 'Manual';
+  const ov = document.createElement('div');
+  ov.className = 'demo-modal-ov';
+  ov.id = 'demoModalOv';
+  ov.onclick = e => { if (e.target === ov) closeTaskModal(); };
+  ov.innerHTML = `<div class="demo-modal-box">
+    <button class="demo-modal-close" onclick="closeTaskModal()">✕ Cerrar</button>
+    <h3>${task.name}</h3>
+    <p class="demo-modal-sub">Detalle del entregable</p>
+    <div class="dm-field"><span class="dmfl">Estado</span><span class="dmfv">${statusLabels[task.status]}</span></div>
+    <div class="dm-field"><span class="dmfl">Responsable</span><span class="dmfv" style="color:${m.color}">● ${m.name}</span></div>
+    <div class="dm-field"><span class="dmfl">Fecha límite</span><span class="dmfv">${task.date}</span></div>
+    <div class="dm-field"><span class="dmfl">Origen</span><span class="dmfv" style="color:#B89EE8">${srcLabel}</span></div>
+  </div>`;
+  document.body.appendChild(ov);
+}
+
+function closeTaskModal() {
+  const ov = document.getElementById('demoModalOv');
+  if (ov) ov.remove();
 }
 
 /* ─── Vote on features ─── */
